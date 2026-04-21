@@ -41,6 +41,8 @@ def tensor_to_image(tensor):
 
 
 def save_images(original_images, watermarked_images, epoch, folder, resize_to=None):
+    os.makedirs(folder, exist_ok=True)
+
     images = original_images[:original_images.shape[0], :, :, :].cpu()
     watermarked_images = watermarked_images[:watermarked_images.shape[0], :, :, :].cpu()
 
@@ -49,12 +51,17 @@ def save_images(original_images, watermarked_images, epoch, folder, resize_to=No
     watermarked_images = (watermarked_images + 1) / 2
 
     if resize_to is not None:
-        images = F.interpolate(images, size=resize_to)
-        watermarked_images = F.interpolate(watermarked_images, size=resize_to)
+        images = F.interpolate(images, size=resize_to, mode='bilinear')
+        watermarked_images = F.interpolate(watermarked_images, size=resize_to, mode='bilinear')
 
+    # 拼接图片在竖直方向（可以改成 dim=3 水平拼接）
     stacked_images = torch.cat([images, watermarked_images], dim=0)
+
     filename = os.path.join(folder, 'epoch-{}.png'.format(epoch))
-    torchvision.utils.save_image(stacked_images, filename, original_images.shape[0], normalize=False)
+
+    # 保存图片，指定 nrow 参数
+    nrow = min(original_images.shape[0], 8)  # 每行最多8张图
+    torchvision.utils.save_image(stacked_images, filename, nrow=nrow, normalize=False)
 
 
 def sorted_nicely(l):
