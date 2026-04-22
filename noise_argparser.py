@@ -7,6 +7,12 @@ from noise_layers.dropout import Dropout
 from noise_layers.resize import Resize
 from noise_layers.quantization import Quantization
 from noise_layers.jpeg_compression import JpegCompression
+# adding new attacking methods:
+from noise_layers.mask_inpainting import MaskInpainting
+from noise_layers.pattern_matching import PatternMatching
+### 
+# maybe also this one:
+# from noise_layers.adversarial_attack import AdversarialAttack
 
 
 def parse_pair(match_groups):
@@ -44,6 +50,28 @@ def parse_resize(resize_command):
     max_ratio = float(ratios[1])
     return Resize((min_ratio, max_ratio))
 
+##adding new command:
+def parse_maskinpainting(inpainting_command):
+    matches = re.match(r'maskinpainting\((\d+\.*\d*),(\d+\.*\d*),(\d+)\)', inpainting_command)
+    if not matches:
+        raise ValueError(f"Invalid maskinpainting command: {inpainting_command}")
+    min_ratio = float(matches.group(1))
+    max_ratio = float(matches.group(2))
+    seed = int(matches.group(3))
+    return MaskInpainting(min_ratio, max_ratio,seed)
+
+
+
+# TODO copy paste from mask inpainting for now.
+def parse_patternmatching(matching_command):
+    matches = re.match(r'patternmatch\((\d+\.*\d*)\)', matching_command)
+    ratio = float(matches.groups()[0])
+    return PatternMatching(ratio)
+
+def parse_adversarialattack(adversarial_command):
+    matches = re.match(r'adversarialattack\((\d+\.*\d*)\)', adversarial_command)
+    ratio = float(matches.groups()[0])
+    return PatternMatching(ratio)
 
 class NoiseArgParser(argparse.Action):
     def __init__(self,
@@ -95,6 +123,10 @@ class NoiseArgParser(argparse.Action):
                 layers.append(parse_dropout(command))
             elif command[:len('resize')] == 'resize':
                 layers.append(parse_resize(command))
+            # TODO adding own method
+            elif command[:len('maskinpainting')] == 'maskinpainting':
+                layers.append(parse_maskinpainting(command))
+
             elif command[:len('jpeg')] == 'jpeg':
                 layers.append('JpegPlaceholder')
             elif command[:len('quant')] == 'quant':
