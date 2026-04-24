@@ -18,12 +18,14 @@ class MaskInpainting(nn.Module):
 
     def forward(self, noised_and_cover):
         noised_image = noised_and_cover[0]
+        # don't need cover image to do repair, unlike dropout/cropout
         cover_image = noised_and_cover[1]
 
+        #batch_size, channels, height, width
         _, _, H, W = noised_image.shape
         output_image = noised_image.clone()
 
-        # random mask size ratio, use rng from init
+        # random mask size ratio, use rng from init, decide mask size, h and w
         mask_ratio = self.rng.uniform(self.mask_min, self.mask_max)
         mask_h = int(H * mask_ratio)
         mask_w = int(W * mask_ratio)
@@ -32,12 +34,13 @@ class MaskInpainting(nn.Module):
         top = self.rng.randint(1, H - mask_h - 1)
         left = self.rng.randint(1, W - mask_w - 1)
 
+        # loop the batch
         for b in range(noised_image.shape[0]):
 
             # surrounding border pixels
             neighbors = []
 
-            # borders: 
+            # borders: only take 1 pixel 
             # top
             neighbors.append(output_image[b, :, top-1, left:left+mask_w])  
             # bottom
@@ -50,7 +53,8 @@ class MaskInpainting(nn.Module):
             # flatten and concatenate
             neighbors = torch.cat([x.reshape(-1) for x in neighbors])
 
-            # just use a mean value for baseline approach, later use opencv version?
+            # just use a mean value to fill the whole mask. 
+            # for baseline approach, later use opencv version?
             fill_value = neighbors.mean()
 
             output_image[b, :, top:top+mask_h, left:left+mask_w] = fill_value

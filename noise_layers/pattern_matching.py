@@ -3,6 +3,10 @@ import torch.nn as nn
 import numpy as np
 
 # just copy paste from mask inpainting, do modification later
+### matching method? candidate:
+# L2 distance
+# SSIM
+# cosine similarity (embedding)
 class PatternMatching(nn.Module):
     """
     use random mask to do inpaiting, give a range of the size of the mask;

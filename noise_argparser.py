@@ -8,7 +8,8 @@ from noise_layers.resize import Resize
 from noise_layers.quantization import Quantization
 from noise_layers.jpeg_compression import JpegCompression
 # adding new attacking methods:
-from noise_layers.mask_inpainting import MaskInpainting
+# from noise_layers.mask_inpainting import MaskInpainting
+from noise_layers.mask_inpainting_telea import MaskInpainting
 from noise_layers.pattern_matching import PatternMatching
 ### 
 # maybe also this one:
