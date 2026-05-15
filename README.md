@@ -112,3 +112,95 @@ This table summarizes experimental runs. Detailed information about the runs can
 
 python main.py new   --name my_baseline   --data-dir /home/keen/HiDDeN/images   --batch-size 8
 
+### set epoch to 400, 1000 train/100 test
+python main.py new \
+  --name default_baseline \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --tensorboard
+
+
+python main.py new \
+  --name default_crop \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "crop((0.2,0.25),(0.2,0.25))" \
+  --tensorboard
+
+python main.py new \
+  --name default_cropout \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "cropout((0.55,0.6),(0.55,0.6))" \
+  --tensorboard
+
+python main.py new \
+  --name default_dropout \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "dropout((0.55,0.6),(0.55,0.6))" \
+  --tensorboard
+
+python main.py new \
+  --name default_resize \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "resize(0.7,0.8)" \
+  --tensorboard
+
+python main.py new \
+  --name default_jpeg \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "jpeg" \
+  --tensorboard
+
+### set epoch to 400, 3000 train/300 test
+python main.py new \
+  --name 3k_baseline \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --tensorboard
+
+
+python main.py new \
+  --name 3k_crop \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "crop((0.2,0.25),(0.2,0.25))" \
+  --tensorboard
+
+python main.py new \
+  --name 3k_cropout \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "cropout((0.55,0.6),(0.55,0.6))" \
+  --tensorboard
+
+python main.py new \
+  --name 3k_dropout \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "dropout(0.55,0.6)" \
+  --tensorboard
+
+python main.py new \
+  --name 3k_resize \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "resize(0.7,0.8)" \
+  --tensorboard
+
+python main.py new \
+  --name 3k_jpeg \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "jpeg" \
+  --tensorboard
+
+python main.py new \
+  --name 3k_inpainting_telea \
+  --data-dir /home/keen/HiDDeN/images \
+  --batch-size 12 \
+  --noise "maskinpainting(0.2,0.4,42)" \
+  --tensorboard

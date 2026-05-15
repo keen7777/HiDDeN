@@ -27,7 +27,7 @@ def main():
     new_run_parser = subparsers.add_parser('new', help='starts a new run')
     new_run_parser.add_argument('--data-dir', '-d', required=True, type=str, help='Data directory.')
     new_run_parser.add_argument('--batch-size', '-b', required=True, type=int, help='Batch size.')
-    new_run_parser.add_argument('--epochs', '-e', default=300, type=int, help='Number of epochs.')
+    new_run_parser.add_argument('--epochs', '-e', default=400, type=int, help='Number of epochs.')
     new_run_parser.add_argument('--name', required=True, type=str, help='Experiment name.')
     new_run_parser.add_argument('--size', '-s', default=128, type=int, help='Image size (H=W).')
     new_run_parser.add_argument('--message', '-m', default=30, type=int, help='Message length in bits.')
