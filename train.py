@@ -27,6 +27,7 @@ def train(model: Hidden,
     :param tb_logger: TensorBoardLogger object. Pass None to disable logging.
     :return:
     """
+    torch.autograd.set_detect_anomaly(True)
 
     train_data, val_data = utils.get_data_loaders(hidden_config, train_options)
     file_count = len(train_data.dataset)

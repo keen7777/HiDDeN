@@ -3,8 +3,8 @@ import torch.nn as nn
 import numpy as np
 import cv2
 
-#class MaskInpaintingTelea(nn.Module):
-class MaskInpainting(nn.Module):
+class MaskInpaintingTelea(nn.Module):
+#class MaskInpainting(nn.Module):
     """
     use random mask to do inpaiting, give a range of the size of the mask;
     use a random number generator(seed=42) to generate different mask for each image(reproducible), 
@@ -12,7 +12,7 @@ class MaskInpainting(nn.Module):
     """
 
     def __init__(self, mask_size_range_min, mask_size_range_max, seed=42):
-        super(MaskInpainting, self).__init__()
+        super(MaskInpaintingTelea, self).__init__()
         self.mask_min = mask_size_range_min
         self.mask_max = mask_size_range_max
         self.rng = np.random.RandomState(seed)

@@ -10,6 +10,8 @@ from model.hidden import *
 from noise_layers.noiser import Noiser
 from PIL import Image
 import torchvision.transforms.functional as TF
+from evaluation.psnr_ssim_evaluation import compute_psnr, compute_ssim
+from evaluation.rgb_yuv_convert import rgb_to_yuv
 
 
 def randomCrop(img, height, width):
@@ -40,7 +42,7 @@ def main():
     args = parser.parse_args()
 
     train_options, hidden_config, noise_config = utils.load_options(args.options_file)
-    noiser = Noiser(noise_config)
+    noiser = Noiser(noise_config, device)
 
     checkpoint = torch.load(args.checkpoint_file)
     hidden_net = Hidden(hidden_config, device, noiser, None)
@@ -57,6 +59,17 @@ def main():
     message = torch.Tensor(np.random.choice([0, 1], (image_tensor.shape[0],
                                                     hidden_config.message_length))).to(device)
     losses, (encoded_images, noised_images, decoded_messages) = hidden_net.validate_on_batch([image_tensor, message])
+
+    ### adding evaluation:
+    cover = image_tensor
+    encoded = encoded_images
+
+    cover = (cover + 1) / 2
+    encoded = (encoded + 1) / 2
+
+    psnr_metrics = compute_psnr(cover, encoded)
+    print(psnr_metrics)
+    ### end adding
     decoded_rounded = decoded_messages.detach().cpu().numpy().round().clip(0, 1)
     message_detached = message.detach().cpu().numpy()
     print('original: {}'.format(message_detached))

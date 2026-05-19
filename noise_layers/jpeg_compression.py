@@ -106,7 +106,7 @@ class JpegCompression(nn.Module):
 
         image_conv_channels = []
         for channel in range(image.shape[1]):
-            image_yuv_ch = image[:, channel, :, :].unsqueeze_(1)
+            image_yuv_ch = image[:, channel, :, :].unsqueeze(1)
             image_conv = F.conv2d(image_yuv_ch, filters, stride=8)
             image_conv = image_conv.permute(0, 2, 3, 1)
             image_conv = image_conv.view(image_conv.shape[0], image_conv.shape[1], image_conv.shape[2], 8, 8)
@@ -115,7 +115,7 @@ class JpegCompression(nn.Module):
                                                   image_conv.shape[1]*image_conv.shape[2],
                                                   image_conv.shape[3]*image_conv.shape[4])
 
-            image_conv.unsqueeze_(1)
+            image_conv = image[:, channel, :, :].unsqueeze(1)
 
             # image_conv = F.conv2d()
             image_conv_channels.append(image_conv)

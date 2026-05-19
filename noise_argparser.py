@@ -8,8 +8,8 @@ from noise_layers.resize import Resize
 from noise_layers.quantization import Quantization
 from noise_layers.jpeg_compression import JpegCompression
 # adding new attacking methods:
-# from noise_layers.mask_inpainting import MaskInpainting
-from noise_layers.mask_inpainting_telea import MaskInpainting
+from noise_layers.mask_inpainting import MaskInpainting
+from noise_layers.mask_inpainting_telea import MaskInpaintingTelea
 from noise_layers.pattern_matching import PatternMatching
 ### 
 # maybe also this one:
@@ -60,6 +60,16 @@ def parse_maskinpainting(inpainting_command):
     max_ratio = float(matches.group(2))
     seed = int(matches.group(3))
     return MaskInpainting(min_ratio, max_ratio,seed)
+
+##adding new command inpaintingtelea:
+def parse_maskinpainting_telea(inpainting_telea_command):
+    matches = re.match(r'teleamaskinpainting\((\d+\.*\d*),(\d+\.*\d*),(\d+)\)', inpainting_telea_command)
+    if not matches:
+        raise ValueError(f"Invalid telea maskinpainting command: {inpainting_telea_command}")
+    min_ratio = float(matches.group(1))
+    max_ratio = float(matches.group(2))
+    seed = int(matches.group(3))
+    return MaskInpaintingTelea(min_ratio, max_ratio,seed)
 
 
 
@@ -127,6 +137,8 @@ class NoiseArgParser(argparse.Action):
             # TODO adding own method
             elif command[:len('maskinpainting')] == 'maskinpainting':
                 layers.append(parse_maskinpainting(command))
+            elif command[:len('teleamaskinpainting')] == 'teleamaskinpainting':
+                layers.append(parse_maskinpainting_telea(command))
 
             elif command[:len('jpeg')] == 'jpeg':
                 layers.append('JpegPlaceholder')
