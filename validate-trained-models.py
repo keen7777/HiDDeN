@@ -7,11 +7,13 @@ import numpy as np
 import pickle
 import utils
 import csv
+import json
 
 from model.hidden import Hidden
 from noise_layers.noiser import Noiser
 from average_meter import AverageMeter
-
+from evaluation.rgb_yuv_convert import convert_img_range,rgb_to_yuv
+from evaluation.psnr_ssim_evaluation import compute_psnr, compute_ssim
 
 def write_validation_loss(file_name, losses_accu, experiment_name, epoch, write_header=False):
     with open(file_name, 'a', newline='') as csvfile:
@@ -34,15 +36,32 @@ def main():
                         help='The root folder where data about experiments are stored.')
     parser.add_argument('--batch-size', '-b', default=1, type=int, help='Validation batch size.')
 
-    args = parser.parse_args()
-    print_each = 25
+    # Keen:
+    # only run 1 model:
+    parser.add_argument('--run-name', type=str, default=None, help='Run only one specific model.')
 
-    completed_runs = [o for o in os.listdir(args.runs_root)
-                      if os.path.isdir(os.path.join(args.runs_root, o)) and o != 'no-noise-defaults']
+    args = parser.parse_args()
+    print_each = 100
+
+    # Keen:
+    # If run-name is specified,validate only one model
+    if args.run_name is not None:
+        completed_runs = [args.run_name]
+    else:
+        completed_runs = [
+            o for o in os.listdir(args.runs_root)
+            if os.path.isdir(os.path.join(args.runs_root, o))
+            and o != 'no-noise-defaults'
+        ]
+
+    # completed_runs = [o for o in os.listdir(args.runs_root)  if os.path.isdir(os.path.join(args.runs_root, o)) and o != 'no-noise-defaults']
 
     print(completed_runs)
 
     write_csv_header = True
+    # Keen:
+    # adding output json for all the results, later graph:
+    all_results = {}
     for run_name in completed_runs:
         current_run = os.path.join(args.runs_root, run_name)
         print(f'Run folder: {current_run}')
@@ -54,7 +73,10 @@ def main():
         checkpoint, chpt_file_name = utils.load_last_checkpoint(os.path.join(current_run, 'checkpoints'))
         print(f'Loaded checkpoint from file {chpt_file_name}')
 
-        noiser = Noiser(noise_config)
+
+        # Keen: 
+        # adding modified para: device
+        noiser = Noiser(noise_config, device)
         model = Hidden(hidden_config, device, noiser, tb_logger=None)
         utils.model_from_checkpoint(model, checkpoint)
 
@@ -67,13 +89,48 @@ def main():
             steps_in_epoch = file_count // train_options.batch_size + 1
 
         losses_accu = {}
+        # Keen: 
+        # adding psnr rgb mean:
+        psnr_rgb_meter = AverageMeter()
+        # adding psnr yuv mean:
+        psnr_y_meter = AverageMeter()
+        psnr_u_meter = AverageMeter()
+        psnr_v_meter = AverageMeter()
+        # adding ssim mean:
+        ssim_meter = AverageMeter()
+
         step = 0
         for image, _ in val_data:
             step += 1
             image = image.to(device)
             message = torch.Tensor(np.random.choice([0, 1], (image.shape[0], hidden_config.message_length))).to(device)
-            losses, (encoded_images, noised_images, decoded_messages) = model.validate_on_batch([image, message],
-                                                                                                set_eval_mode=True)
+            # losses, (encoded_images, noised_images, decoded_messages) = model.validate_on_batch([image, message],set_eval_mode=True)
+
+            # Keen: 
+            # adding psnr rgb mean: 
+            losses, (encoded_images, noised_images, decoded_messages) = model.validate_on_batch([image, message])
+            cover = convert_img_range(image)
+            encoded = convert_img_range(encoded_images)
+            
+            psnr = compute_psnr(cover, encoded)
+            psnr_rgb_meter.update(psnr.item())
+            # ssim for human eye
+            ssim = compute_ssim(cover, encoded)
+            ssim_meter.update(ssim.item())
+
+            # RGB -> YUV
+            # since human eyes are more sensitive to Y channel
+            cover_yuv = rgb_to_yuv(cover)
+            encoded_yuv = rgb_to_yuv(encoded)
+            cover_y, cover_u, cover_v = cover_yuv
+            encoded_y, encoded_u, encoded_v = encoded_yuv
+            psnr_y = compute_psnr(cover_y, encoded_y)
+            psnr_y_meter.update(psnr_y.item())
+            psnr_u = compute_psnr(cover_u, encoded_u)
+            psnr_u_meter.update(psnr_u.item())
+            psnr_v = compute_psnr(cover_v, encoded_v)
+            psnr_v_meter.update(psnr_v.item())
+
             if not losses_accu:  # dict is empty, initialize
                 for name in losses:
                     losses_accu[name] = AverageMeter()
@@ -85,10 +142,43 @@ def main():
                 print('-' * 40)
 
         # utils.print_progress(losses_accu)
+        # Keen: print out psnr
+        # ============================
+        # ADD: final dataset-level metrics
+        # ============================
+        print("====================================")
+        print(f"[{run_name}] DATASET EVALUATION RESULTS")
+        print("------------------------------------")
+        print(f"Mean PSNR: {psnr_rgb_meter.avg:.4f}")
+        print(f"Mean PSNR(Y): {psnr_y_meter.avg:.4f}")
+        print(f"Mean PSNR(U): {psnr_u_meter.avg:.4f}")
+        print(f"Mean PSNR(V): {psnr_v_meter.avg:.4f}")
+        print(f"SSIM: {ssim_meter.avg:.4f}")
+        print(f"Mean BER : {losses_accu['bitwise-error  '].avg:.6f}")
+        print("====================================")
+
+        # Save metrics into dictionary
+        model_name = run_name.split(" ")[0]
+        all_results[model_name] = {
+            "psnr": round(psnr_rgb_meter.avg, 4),
+            "psnr_y": round(psnr_y_meter.avg, 4),
+            "psnr_u": round(psnr_u_meter.avg, 4),
+            "psnr_v": round(psnr_v_meter.avg, 4),
+            "ssim": round(ssim_meter.avg, 4),
+            "ber": round(losses_accu['bitwise-error  '].avg, 6)
+        }
+        
+
+
         write_validation_loss(os.path.join(args.runs_root, 'validation_run.csv'), losses_accu, run_name,
                               checkpoint['epoch'],
                               write_header=write_csv_header)
         write_csv_header = False
+
+        with open("evaluation_results.json", "w") as f:
+            json.dump(all_results, f, indent=4)
+
+        print("Saved evaluation results to evaluation_results.json")
 
     # train(model, device, hidden_config, train_options, this_run_folder, tb_logger)
 

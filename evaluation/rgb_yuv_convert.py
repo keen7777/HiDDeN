@@ -6,3 +6,8 @@ def rgb_to_yuv(x):
     V = 0.615 * r - 0.51499 * g - 0.10001 * b
 
     return Y, U, V
+
+def convert_img_range(img):
+    # from [-1,1] to [0,1]
+    cover = (img + 1) / 2
+    return cover
