@@ -40,10 +40,35 @@ python validate-trained-models.py \
   --run-name "3k_jpeg 2026.05.15--15-48-12"
 
 
-# sweep: 
+## sweep: baseline model to different attack:
+# base -> dropout
 python sweep.py \
   -d images \
   -r runs \
   --run-name "3k_baseline 2026.05.13--12-17-40" \
   --attack dropout \
   --min 0.1 --max 0.9 --steps 9
+
+# base-> telea inpainting 
+python sweep.py \
+  -d images \
+  -r runs \
+  --run-name "3k_baseline 2026.05.13--12-17-40" \
+  --attack teleamaskinpainting \
+  --min 0.1 --max 0.9 --steps 9
+
+# different strengh:
+# base-> telea inpainting 
+python sweep.py \
+  -d images \
+  -r runs \
+  --run-name "3k_baseline 2026.05.13--12-17-40" \
+  --attack teleamaskinpainting \
+  --min 0.01 --max 0.09 --steps 9
+
+# base -> resize
+python sweep.py   -d images   -r runs   --run-name "3k_baseline 2026.05.13--12-17-40"   --attack resize   --min 0.1 --max 0.9 --steps 9
+
+### self -> self
+# resize:
+python sweep.py   -d images   -r runs   --run-name "3k_resize 2026.05.14--17-34-33"   --attack resize   --min 0.1 --max 0.9 --steps 9
