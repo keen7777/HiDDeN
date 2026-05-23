@@ -57,6 +57,7 @@ def build_noise_layer(name, s, debug = False):
         min_mask_size=8,
         max_aspect_ratio=3.0,
         fill_strategy=MeanFill(),   
+        randomize_ratio=False,
         seed=42
     )
     

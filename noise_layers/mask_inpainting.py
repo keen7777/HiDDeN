@@ -32,12 +32,13 @@ class MaskInpainting(nn.Module):
 
     def __init__(
         self,
-        max_mask_ratio=0.5,
+        max_mask_ratio=1,
         max_mask_number=10,
         min_mask_size=8,
         max_aspect_ratio=3.0,
         fill_strategy=None,
         seed=None,
+        randomize_ratio=True,
     ):
         super(MaskInpainting, self).__init__()
 
@@ -63,6 +64,8 @@ class MaskInpainting(nn.Module):
         # random generator
         # if seed is None -> fully random
         self.rng = np.random.RandomState(seed)
+        # use random while training, turn off while sweep
+        self.randomize_ratio = randomize_ratio
 
     # 1. Generate random masks   
     def generate_random_masks(self, H, W):
@@ -70,8 +73,14 @@ class MaskInpainting(nn.Module):
         masks = []
 
         # 🎯 target TRUE coverage
-        strength = self.rng.uniform(0.05, self.max_mask_ratio)
-        target_coverage = strength
+        if self.randomize_ratio:
+            mask_ratio = self.rng.uniform(
+                0.05,
+                self.max_mask_ratio
+            )
+        else:
+            mask_ratio = self.max_mask_ratio
+        target_coverage = mask_ratio
 
         # pixel-level union mask
         mask_union = np.zeros((H, W), dtype=np.uint8)
