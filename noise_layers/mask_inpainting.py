@@ -69,70 +69,48 @@ class MaskInpainting(nn.Module):
 
         masks = []
 
-        # 🎯 1. strength -> target coverage (IMPORTANT CHANGE)
+        # 🎯 target TRUE coverage
         strength = self.rng.uniform(0.05, self.max_mask_ratio)
-        target_area = H * W * strength
+        target_coverage = strength
 
-        accumulated_area = 0.0
+        # pixel-level union mask
+        mask_union = np.zeros((H, W), dtype=np.uint8)
 
-        # safety bounds
         max_w = W - 4
         max_h = H - 4
 
-        # avoid infinite loop
-        max_iters = 1000
         iters = 0
+        max_iters = 2000
 
-        while accumulated_area < target_area and iters < max_iters:
+        while mask_union.mean() < target_coverage and iters < max_iters:
 
             iters += 1
 
-            # 2. sample ONE mask (no dirichlet anymore)
             aspect_ratio = self.rng.uniform(
                 1 / self.max_aspect_ratio,
                 self.max_aspect_ratio
             )
 
-            # make mask size proportional but still random
-            remaining = target_area - accumulated_area
-
-            # 🔥 key trick: remaining-guided sampling
+            # sample candidate area (rough control)
             area = self.rng.uniform(
                 self.min_mask_size ** 2,
-                max(self.min_mask_size ** 2, remaining)
+                H * W * 0.1  # optional cap
             )
 
             w = int(np.sqrt(area * aspect_ratio))
             h = int(np.sqrt(area / aspect_ratio))
 
-            # enforce minimum size
-            w = max(self.min_mask_size, w)
-            h = max(self.min_mask_size, h)
-
-            # reject if too large
-            if w > max_w or h > max_h:
-                continue
+            w = max(1, min(w, max_w))
+            h = max(1, min(h, max_h))
 
             if max_w - w <= 1 or max_h - h <= 1:
                 continue
 
-            # sample position
             left = self.rng.randint(1, max_w - w)
             top = self.rng.randint(1, max_h - h)
 
-            masks.append((top, left, h, w))
-
-            accumulated_area += w * h
-
-        # fallback safety (VERY important)
-        if accumulated_area < target_area:
-            missing = target_area - accumulated_area
-
-            w = min(max_w, max(self.min_mask_size, int(np.sqrt(missing))))
-            h = min(max_h, max(self.min_mask_size, int(np.sqrt(missing))))
-
-            left = self.rng.randint(1, max_w - w)
-            top = self.rng.randint(1, max_h - h)
+            # apply to union mask
+            mask_union[top:top+h, left:left+w] = 1
 
             masks.append((top, left, h, w))
 
