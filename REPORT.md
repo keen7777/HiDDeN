@@ -72,3 +72,11 @@ python sweep.py   -d images   -r runs   --run-name "3k_baseline 2026.05.13--12-1
 ### self -> self
 # resize:
 python sweep.py   -d images   -r runs   --run-name "3k_resize 2026.05.14--17-34-33"   --attack resize   --min 0.1 --max 0.9 --steps 9
+
+# inpainting:
+python sweep.py   -d images   -r runs   --run-name "3k_inpainting 2026.05.17--20-40-50"   --attack maskinpainting   --min 0.1 --max 0.9 --steps 9
+
+python sweep.py   -d images   -r runs   --run-name "3k_inpainting_telea 2026.05.17--14-15-56"   --attack teleamaskinpainting   --min 0.1 --max 0.9 --steps 9
+
+# jpeg
+python sweep.py   -d images   -r runs   --run-name "3k_jpeg 2026.05.15--15-48-12"   --attack jpeg   --min 0.1 --max 0.9 --steps 9

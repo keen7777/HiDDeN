@@ -4,6 +4,8 @@ import torch
 import numpy as np
 import json
 
+
+import torchvision.utils as vutils
 import utils
 from model.hidden import Hidden
 from average_meter import AverageMeter
@@ -21,7 +23,7 @@ from noise_layers.mask_inpainting_telea import MaskInpaintingTelea
 # =========================
 # BUILD NOISE LAYER (FIXED)
 # =========================
-def build_noise_layer(name, s):
+def build_noise_layer(name, s, debug = False):
 
     
     # s means attacking strength
@@ -73,6 +75,7 @@ def main():
     parser.add_argument("--min", type=float, default=0.1)
     parser.add_argument("--max", type=float, default=1.0)
     parser.add_argument("--steps", type=int, default=10)
+    parser.add_argument("--debug", action="store_true")
 
     args = parser.parse_args()
 
@@ -86,14 +89,15 @@ def main():
     checkpoint, _ = utils.load_last_checkpoint(os.path.join(run_path, "checkpoints"))
 
     strengths = np.linspace(args.min, args.max, args.steps)
-
+    model_name = args.run_name.split(" ")[0]
     results = {}
 
     for s in strengths:
 
         print(f"\n===== {args.attack} | strength={s:.3f} =====")
+        
 
-        noise_layer = build_noise_layer(args.attack, s)
+        noise_layer = build_noise_layer(args.attack, s, debug=args.debug)
         noiser = noise_layer
 
         model = Hidden(hidden_config, device, noiser, tb_logger=None)
@@ -117,12 +121,36 @@ def main():
             losses, (encoded_images, noised_images, decoded) = model.validate_on_batch([image, message])
 
             cover = convert_img_range(image)
+            encoded_images = convert_img_range(encoded_images)
             noised_images = convert_img_range(noised_images)
 
             psnr_meter.update(compute_psnr(cover, noised_images).item())
             ssim_meter.update(compute_ssim(cover, noised_images).item())
 
             ber_meter.update(losses["bitwise-error  "])
+
+            # =========================
+            # DEBUG SAVE (ADD HERE)
+            # =========================
+
+            
+
+            save_dir = f"debug_psnr_model_{model_name}_attack_{args.attack}_range_{args.min}_{args.max}"
+            os.makedirs(save_dir, exist_ok=True)
+
+            for idx in range(min(1, cover.size(0))):
+                vutils.save_image(
+                    cover[idx],
+                    f"{save_dir}/cover_{float(s):.3f}_{idx}.png"
+                )
+
+                vutils.save_image(
+                    noised_images[idx],
+                    f"{save_dir}/noised_{float(s):.3f}_{idx}.png"
+                )
+                #print("original mean:", cover.mean())
+                #print("encoded-layer mean:", encoded_images.mean())
+                #print("noise-layer mean:", noised_images.mean())
 
         results[float(s)] = {
             "psnr": psnr_meter.avg,
@@ -132,7 +160,7 @@ def main():
 
         print(f"PSNR={psnr_meter.avg:.4f}, SSIM={ssim_meter.avg:.4f}, BER={ber_meter.avg:.6f}")
 
-    out_file = f"sweep_{args.run_name}_{args.attack}.json"
+    out_file = f"sweep_{model_name}_{args.attack}_range_{args.min}_{args.max}.json"
 
     with open(out_file, "w") as f:
         json.dump(results, f, indent=4)
