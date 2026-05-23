@@ -11,6 +11,18 @@ from noise_layers.jpeg_compression import JpegCompression
 from noise_layers.mask_inpainting import MaskInpainting
 from noise_layers.mask_inpainting_telea import MaskInpaintingTelea
 from noise_layers.pattern_matching import PatternMatching
+
+from noise_layers.fill_strategies.mean_fill import MeanFill
+from noise_layers.fill_strategies.random_fill import RandomNeighborFill
+from noise_layers.fill_strategies.blur_fill import BlurFill
+
+
+# map string -> class
+FILL_MAP = {
+    "mean": MeanFill,
+    "random": RandomNeighborFill,
+    "blur": BlurFill,
+}
 ### 
 # maybe also this one:
 # from noise_layers.adversarial_attack import AdversarialAttack
@@ -52,6 +64,7 @@ def parse_resize(resize_command):
     return Resize((min_ratio, max_ratio))
 
 ##adding new command:
+'''
 def parse_maskinpainting(inpainting_command):
     matches = re.match(r'maskinpainting\((\d+\.*\d*),(\d+\.*\d*),(\d+)\)', inpainting_command)
     if not matches:
@@ -60,6 +73,61 @@ def parse_maskinpainting(inpainting_command):
     max_ratio = float(matches.group(2))
     seed = int(matches.group(3))
     return MaskInpainting(min_ratio, max_ratio,seed)
+'''
+
+# redo inpainting:
+def parse_maskinpainting(inpainting_command: str):
+    """
+    Example:
+    maskinpainting(0.5,10,8,3.0,mean,42)
+        max_mask_ratio=0.5,
+        max_mask_number=10,
+        min_mask_size=8,
+        max_aspect_ratio=3.0,
+        fill_strategy=None,
+        seed=None,
+    """
+
+    # 1. basic format check
+    if not inpainting_command.startswith("maskinpainting(") or not inpainting_command.endswith(")"):
+        raise ValueError(f"Invalid command format: {inpainting_command}")
+
+    # 2. remove wrapper
+    content = inpainting_command[len("maskinpainting("):-1]
+
+    # 3. split parameters
+    parts = [p.strip() for p in content.split(",")]
+
+    if len(parts) != 6:
+        raise ValueError(
+            "Expected format: "
+            "maskinpainting(max_ratio,max_num,min_size,max_ar,fill,seed)"
+        )
+
+    # 4. parse parameters
+    max_ratio = float(parts[0])
+    max_num = int(parts[1])
+    min_size = int(parts[2])
+    max_ar = float(parts[3])
+    fill_name = parts[4]
+    seed = int(parts[5])
+
+    # 5. fill strategy
+    if fill_name not in FILL_MAP:
+        raise ValueError(f"Unknown fill strategy: {fill_name}")
+
+    fill_strategy = FILL_MAP[fill_name]()
+
+    print("DEBUG fill_strategy:", type(fill_strategy), fill_strategy)
+    # 6. build model
+    return MaskInpainting(
+        max_mask_ratio=max_ratio,
+        max_mask_number=max_num,
+        min_mask_size=min_size,
+        max_aspect_ratio=max_ar,
+        fill_strategy=fill_strategy,
+        seed=seed,
+    )
 
 ##adding new command inpaintingtelea:
 def parse_maskinpainting_telea(inpainting_telea_command):

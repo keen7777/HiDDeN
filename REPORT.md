@@ -80,3 +80,7 @@ python sweep.py   -d images   -r runs   --run-name "3k_inpainting_telea 2026.05.
 
 # jpeg
 python sweep.py   -d images   -r runs   --run-name "3k_jpeg 2026.05.15--15-48-12"   --attack jpeg   --min 0.1 --max 0.9 --steps 9
+
+
+# redo mean inpainting:
+python sweep.py   -d images   -r runs   --run-name "3k_baseline 2026.05.13--12-17-40"   --attack maskinpainting   --min 0.1 --max 0.9 --steps 9

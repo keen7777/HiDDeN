@@ -19,6 +19,18 @@ from noise_layers.jpeg_compression import JpegCompression
 from noise_layers.mask_inpainting import MaskInpainting
 from noise_layers.mask_inpainting_telea import MaskInpaintingTelea
 
+from noise_layers.fill_strategies.mean_fill import MeanFill
+from noise_layers.fill_strategies.random_fill import RandomNeighborFill
+from noise_layers.fill_strategies.blur_fill import BlurFill
+
+
+# map string -> class
+FILL_MAP = {
+    "mean": MeanFill,
+    "random": RandomNeighborFill,
+    "blur": BlurFill,
+}
+
 
 # =========================
 # BUILD NOISE LAYER (FIXED)
@@ -39,7 +51,21 @@ def build_noise_layer(name, s, debug = False):
         return Resize((s, s))
     
     if name == "maskinpainting":
-        return MaskInpainting(s,s)
+        return MaskInpainting(
+        max_mask_ratio=s,
+        max_mask_number=20,
+        min_mask_size=8,
+        max_aspect_ratio=3.0,
+        fill_strategy=MeanFill(),   
+        seed=42
+    )
+    
+    #   max_mask_ratio=0.5,
+        max_mask_number=10,
+        min_mask_size=8,
+        max_aspect_ratio=3.0,
+        fill_strategy=None,
+        seed=None,
     
     if name == "teleamaskinpainting":
         return MaskInpaintingTelea(s,s)
