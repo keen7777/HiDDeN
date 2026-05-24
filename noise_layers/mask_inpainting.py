@@ -124,77 +124,31 @@ class MaskInpainting(nn.Module):
             masks.append((top, left, h, w))
 
         return masks
-
-    # Fill one mask region
-    def fill_mask_region(self, image, b, top, left, h, w):
-
-        H, W = image.shape[2], image.shape[3]
-
-        # original box
-        x1, y1 = left, top
-        x2, y2 = left + w, top + h
-
-        # clip
-        x1 = max(0, x1)
-        y1 = max(0, y1)
-        x2 = min(W, x2)
-        y2 = min(H, y2)
-
-        # invalid mask
-        if x1 >= x2 or y1 >= y2:
-            return
-
-        # compute neighbors using clipped region (important: still use original boundary logic or adjust)
-        neighbors = []
-
-        if y1 > 0:
-            neighbors.append(image[b, :, y1-1, x1:x2])
-        if y2 < H:
-            neighbors.append(image[b, :, y2, x1:x2])
-        if x1 > 0:
-            neighbors.append(image[b, :, y1:y2, x1-1])
-        if x2 < W:
-            neighbors.append(image[b, :, y1:y2, x2])
-
-        neighbors = torch.cat([x.reshape(-1) for x in neighbors])
-        fill_value = neighbors.mean()
-
-        image[b, :, y1:y2, x1:x2] = fill_value
-
+    
     
     # Forward
     def forward(self, noised_and_cover):
 
-        # encoded/noised image
-        noised_image = noised_and_cover[0]
-
-        # cover image is unused here
-        cover_image = noised_and_cover[1]
-
-        # image size
+        noised_image, cover_image = noised_and_cover
         B, C, H, W = noised_image.shape
 
-        # clone image
-        output_image = noised_image.clone()
+        output = noised_image.clone()
 
-        
-        # IMPORTANT:
-        # Generate DIFFERENT masks for EACH image
         for b in range(B):
 
-            # Generate masks for current image
             masks = self.generate_random_masks(H, W)
 
-            # Apply all masks
+            # =========================
+            # build ONE global mask
+            # =========================
+            mask = torch.zeros((H, W), dtype=torch.float32, device=output.device)
+
             for top, left, h, w in masks:
+                mask[top:top+h, left:left+w] = 1.0
 
-                self.fill_mask_region(
-                    output_image,
-                    b,
-                    top,
-                    left,
-                    h,
-                    w
-                )
+            # =========================
+            # apply fill strategy
+            # =========================
+            output[b:b+1] = self.fill_strategy.fill(output[b:b+1], mask)
 
-        return [output_image, cover_image]
+        return [output, cover_image]

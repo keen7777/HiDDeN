@@ -218,3 +218,7 @@ python test_model.py \
 -c "runs/3k_baseline 2026.05.13--12-17-40/checkpoints/3k_baseline--epoch-400.pyt" \
 -s images/train/train_class/000000000009.jpg \
 -o "runs/3k_baseline 2026.05.13--12-17-40/options-and-config.pickle"
+
+# test combine inpainting:
+python main.py new --name '3k_combined_inpainting' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'maskinpainting(0.9,10,8,3.0,mean,42)+maskinpainting(0.9,10,8,3.0,telea,42)+maskinpainting(0.9,10,8,3.0,patchmatch,42)' --tensorboard 
+

@@ -1,24 +1,26 @@
 import torch
 from .base import FillStrategy
-
-
 class RandomNeighborFill(FillStrategy):
-    """
-    Fill with a random pixel from boundary.
-    """
 
-    def fill(self, image, b, top, left, h, w):
+    def fill(self, image, mask):
 
-        neighbors = []
+        B, C, H, W = image.shape
+        mask = mask.bool()
 
-        neighbors.append(image[b, :, top - 1, left:left + w])
-        neighbors.append(image[b, :, top + h, left:left + w])
-        neighbors.append(image[b, :, top:top + h, left - 1])
-        neighbors.append(image[b, :, top:top + h, left + w])
+        output = image.clone()
 
-        neighbors = torch.cat([x.reshape(-1) for x in neighbors])
+        for b in range(B):
+            img = output[b]
 
-        idx = torch.randint(0, neighbors.shape[0], (1,))
-        fill_value = neighbors[idx]
+            valid_pixels = img[:, ~mask].reshape(C, -1)
 
-        image[b, :, top:top + h, left:left + w] = fill_value
+            for c in range(C):
+                sampled = valid_pixels[c][
+                    torch.randint(0, valid_pixels.shape[1], (mask.sum(),))
+                ]
+
+                img[c][mask] = sampled
+
+            output[b] = img
+
+        return output

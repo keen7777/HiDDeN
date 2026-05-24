@@ -1,16 +1,29 @@
 import torch
+import torch.nn.functional as F
 from .base import FillStrategy
 
 
 class BlurFill(FillStrategy):
-    """
-    Use local context average (smoother than mean border).
-    """
 
-    def fill(self, image, b, top, left, h, w):
+    def __init__(self, kernel_size=3):
+        self.kernel_size = kernel_size
 
-        patch = image[b, :, top-1:top+h+1, left-1:left+w+1]
+    def fill(self, image, mask):
 
-        fill_value = patch.mean()
+        B, C, H, W = image.shape
 
-        image[b, :, top:top+h, left:left+w] = fill_value
+        # =========================
+        # correct depthwise kernel
+        # =========================
+        kernel = torch.ones((C, 1, 3, 3), device=image.device) / 9.0
+
+        blurred = F.conv2d(
+            image,
+            kernel,
+            padding=1,
+            groups=C
+        )
+
+        mask = mask.unsqueeze(0).unsqueeze(0).float()
+
+        return image * (1 - mask) + blurred * mask

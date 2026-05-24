@@ -24,13 +24,16 @@ from noise_layers.fill_strategies.random_fill import RandomNeighborFill
 from noise_layers.fill_strategies.blur_fill import BlurFill
 from noise_layers.fill_strategies.telea_fill import TeleaFill
 
+from noise_layers.fill_strategies.patchmatch_fill import PatchMatchFill
+
 
 # map string -> class
 FILL_MAP = {
     "mean": MeanFill,
     "random": RandomNeighborFill,
     "blur": BlurFill,
-    "telea": TeleaFill
+    "telea": TeleaFill,
+    "patchmatch": PatchMatchFill
 }
 
 
@@ -58,7 +61,7 @@ def build_noise_layer(name, s, debug = False):
         max_mask_number=20,
         min_mask_size=8,
         max_aspect_ratio=3.0,
-        fill_strategy=TeleaFill(),   
+        fill_strategy=PatchMatchFill(),   
         randomize_ratio=False,
         seed=42
     )

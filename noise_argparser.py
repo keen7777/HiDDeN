@@ -15,6 +15,8 @@ from noise_layers.pattern_matching import PatternMatching
 from noise_layers.fill_strategies.mean_fill import MeanFill
 from noise_layers.fill_strategies.random_fill import RandomNeighborFill
 from noise_layers.fill_strategies.blur_fill import BlurFill
+from noise_layers.fill_strategies.telea_fill import TeleaFill
+from noise_layers.fill_strategies.patchmatch_fill import PatchMatchFill
 
 
 # map string -> class
@@ -22,6 +24,8 @@ FILL_MAP = {
     "mean": MeanFill,
     "random": RandomNeighborFill,
     "blur": BlurFill,
+    "telea": TeleaFill,
+    "patchmatch": PatchMatchFill
 }
 ### 
 # maybe also this one:

@@ -1,30 +1,36 @@
+# noise_layers/fill_strategies/mean_fill.py
+
 import torch
 from .base import FillStrategy
 
 
 class MeanFill(FillStrategy):
-    """
-    Fill masked region with mean of surrounding pixels.
-    """
 
-    def fill(self, image, b, top, left, h, w):
+    def fill(self, image, mask):
 
-        neighbors = []
+        # image: [1,C,H,W]
+        B, C, H, W = image.shape
 
-        # top
-        neighbors.append(image[b, :, top - 1, left:left + w])
+        mask = mask.bool()
 
-        # bottom
-        neighbors.append(image[b, :, top + h, left:left + w])
+        output = image.clone()
 
-        # left
-        neighbors.append(image[b, :, top:top + h, left - 1])
+        for b in range(B):
 
-        # right
-        neighbors.append(image[b, :, top:top + h, left + w])
+            img = output[b]
 
-        neighbors = torch.cat([x.reshape(-1) for x in neighbors])
+            # pixels outside mask
+            valid = ~mask
 
-        fill_value = neighbors.mean()
+            for c in range(C):
+                channel = img[c]
 
-        image[b, :, top:top + h, left:left + w] = fill_value
+                mean_val = channel[valid].mean()
+
+                channel[mask] = mean_val
+
+                img[c] = channel
+
+            output[b] = img
+
+        return output

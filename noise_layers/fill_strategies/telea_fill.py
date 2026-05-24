@@ -1,8 +1,6 @@
-# noise_layers/fill_strategies/telea_fill.py
-
-import torch
-import numpy as np
 import cv2
+import numpy as np
+import torch
 from .base import FillStrategy
 
 
@@ -11,28 +9,26 @@ class TeleaFill(FillStrategy):
     def __init__(self, radius=3):
         self.radius = radius
 
-    def fill(self, image, mask, b):
+    def fill(self, image, mask):
 
-        img = image[b].detach()
+        # image: [1,C,H,W]
+        img = image[0]
 
-        # [-1,1] → [0,1]
         if img.min() < 0:
             img = (img + 1) / 2.0
 
-        img = torch.clamp(img, 0.0, 1.0)
+        img = torch.clamp(img, 0, 1)
 
-        img = img.permute(1, 2, 0).cpu().numpy()
-        img_uint8 = (img * 255.0).astype(np.uint8)
+        img = img.permute(1,2,0).cpu().numpy()
+        img = (img * 255).astype(np.uint8)
 
-        # OpenCV expects single-channel or 3-channel mask
-        telea = cv2.inpaint(
-            img_uint8,
-            mask,
-            self.radius,
-            cv2.INPAINT_TELEA
-        )
+        mask_np = (mask.cpu().numpy() * 255).astype(np.uint8)
 
-        result = torch.from_numpy(telea).permute(2, 0, 1).float() / 255.0
-        result = result * 2.0 - 1.0
+        out = cv2.inpaint(img, mask_np, self.radius, cv2.INPAINT_TELEA)
 
-        image[b] = result.to(image.device)
+        out = torch.from_numpy(out).float() / 255.0
+        out = out.permute(2,0,1)
+
+        out = out * 2 - 1
+
+        return out.unsqueeze(0).to(image.device)
