@@ -19,7 +19,7 @@ class TeleaFill(FillStrategy):
 
         img = torch.clamp(img, 0, 1)
 
-        img = img.permute(1,2,0).cpu().numpy()
+        img = img.detach().permute(1, 2, 0).cpu().numpy()
         img = (img * 255).astype(np.uint8)
 
         mask_np = (mask.cpu().numpy() * 255).astype(np.uint8)

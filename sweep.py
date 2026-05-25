@@ -23,9 +23,11 @@ from noise_layers.fill_strategies.mean_fill import MeanFill
 from noise_layers.fill_strategies.random_fill import RandomNeighborFill
 from noise_layers.fill_strategies.blur_fill import BlurFill
 from noise_layers.fill_strategies.telea_fill import TeleaFill
-
 from noise_layers.fill_strategies.patchmatch_fill import PatchMatchFill
-
+from noise_layers.fill_strategies.resnet_fill import ResNetFill
+from noise_layers.fill_strategies.diffusion_fill import DiffusionFill
+from noise_layers.fill_strategies.generator import CorruptionGenerator
+from noise_layers.learnable_inpainting import LearnableInpainting
 
 # map string -> class
 FILL_MAP = {
@@ -33,7 +35,10 @@ FILL_MAP = {
     "random": RandomNeighborFill,
     "blur": BlurFill,
     "telea": TeleaFill,
-    "patchmatch": PatchMatchFill
+    "patchmatch": PatchMatchFill,
+    "resnet": ResNetFill,
+    "diffusion": DiffusionFill,
+    "generator": CorruptionGenerator()
 }
 
 
@@ -65,6 +70,9 @@ def build_noise_layer(name, s, debug = False):
         randomize_ratio=False,
         seed=42
     )
+
+    if name == "learnableinpainting":
+        return LearnableInpainting(s,s,32)
     
     #   max_mask_ratio=0.5,
         max_mask_number=10,
@@ -156,6 +164,11 @@ def main():
             encoded_images = convert_img_range(encoded_images)
             noised_images = convert_img_range(noised_images)
 
+            # 🔥 final safety clamp (IMPORTANT)
+            cover = torch.clamp(cover, 0, 1)
+            encoded_images = torch.clamp(encoded_images, 0, 1)
+            noised_images = torch.clamp(noised_images, 0, 1)
+
             psnr_meter.update(compute_psnr(cover, noised_images).item())
             ssim_meter.update(compute_ssim(cover, noised_images).item())
 
@@ -180,9 +193,13 @@ def main():
                     noised_images[idx],
                     f"{save_dir}/noised_{float(s):.3f}_{idx}.png"
                 )
-                #print("original mean:", cover.mean())
-                #print("encoded-layer mean:", encoded_images.mean())
-                #print("noise-layer mean:", noised_images.mean())
+                # print("original mean:", cover.mean())
+                # print("encoded-layer mean:", encoded_images.mean())
+                # print("noise-layer mean:", noised_images.mean())
+                # print("std:", noised_images.std())
+                # print("min/max:", noised_images.min(), noised_images.max())
+                # print("per-channel mean:", noised_images.mean(dim=(0,2,3)))
+
 
         results[float(s)] = {
             "psnr": psnr_meter.avg,

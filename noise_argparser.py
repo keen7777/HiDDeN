@@ -17,7 +17,10 @@ from noise_layers.fill_strategies.random_fill import RandomNeighborFill
 from noise_layers.fill_strategies.blur_fill import BlurFill
 from noise_layers.fill_strategies.telea_fill import TeleaFill
 from noise_layers.fill_strategies.patchmatch_fill import PatchMatchFill
-
+from noise_layers.fill_strategies.resnet_fill import ResNetFill
+from noise_layers.fill_strategies.diffusion_fill import DiffusionFill
+### fuck
+from noise_layers.learnable_inpainting import LearnableInpainting
 
 # map string -> class
 FILL_MAP = {
@@ -25,7 +28,9 @@ FILL_MAP = {
     "random": RandomNeighborFill,
     "blur": BlurFill,
     "telea": TeleaFill,
-    "patchmatch": PatchMatchFill
+    "patchmatch": PatchMatchFill,
+    "resnet": ResNetFill,
+    "diffusion": DiffusionFill
 }
 ### 
 # maybe also this one:
@@ -78,6 +83,38 @@ def parse_maskinpainting(inpainting_command):
     seed = int(matches.group(3))
     return MaskInpainting(min_ratio, max_ratio,seed)
 '''
+
+def parse_learnable_inpainting(command):
+
+    """
+    Example:
+        learnableinpainting(0.1,0.3,32)
+
+    means:
+        min_mask_ratio = 0.1
+        max_mask_ratio = 0.3
+        hidden_channels = 32
+    """
+
+    matches = re.match(
+        r'learnableinpainting\((\d+\.*\d*),(\d+\.*\d*),(\d+)\)',
+        command
+    )
+
+    if matches is None:
+        raise ValueError(
+            f'Invalid learnableinpainting command: {command}'
+        )
+
+    min_ratio = float(matches.group(1))
+    max_ratio = float(matches.group(2))
+    hidden_channels = int(matches.group(3))
+
+    return LearnableInpainting(
+        min_ratio=min_ratio,
+        max_ratio=max_ratio,
+        hidden_channels=hidden_channels
+    )
 
 # redo inpainting:
 def parse_maskinpainting(inpainting_command: str):
@@ -211,7 +248,8 @@ class NoiseArgParser(argparse.Action):
                 layers.append(parse_maskinpainting(command))
             elif command[:len('teleamaskinpainting')] == 'teleamaskinpainting':
                 layers.append(parse_maskinpainting_telea(command))
-
+            elif command.startswith('learnableinpainting'):
+                layers.append(parse_learnable_inpainting(command))
             elif command[:len('jpeg')] == 'jpeg':
                 layers.append('JpegPlaceholder')
             elif command[:len('quant')] == 'quant':

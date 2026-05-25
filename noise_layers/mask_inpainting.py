@@ -2,13 +2,13 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-
-import torch
-import torch.nn as nn
-import numpy as np
 from noise_layers.fill_strategies.mean_fill import MeanFill
 from noise_layers.fill_strategies.random_fill import RandomNeighborFill
 from noise_layers.fill_strategies.blur_fill import BlurFill
+from noise_layers.fill_strategies.telea_fill import TeleaFill
+from noise_layers.fill_strategies.patchmatch_fill import PatchMatchFill
+from noise_layers.fill_strategies.resnet_fill import ResNetFill
+from noise_layers.fill_strategies.diffusion_fill import DiffusionFill
 
 
 class MaskInpainting(nn.Module):
@@ -89,7 +89,7 @@ class MaskInpainting(nn.Module):
         max_h = H - 4
 
         iters = 0
-        max_iters = 2000
+        max_iters = 300
 
         while mask_union.mean() < target_coverage and iters < max_iters:
 
@@ -128,27 +128,25 @@ class MaskInpainting(nn.Module):
     
     # Forward
     def forward(self, noised_and_cover):
-
         noised_image, cover_image = noised_and_cover
+
+        # noised_image = noised_image.detach()
         B, C, H, W = noised_image.shape
 
         output = noised_image.clone()
 
         for b in range(B):
 
-            masks = self.generate_random_masks(H, W)
+            mask = torch.zeros((H, W), device=output.device)
 
-            # =========================
-            # build ONE global mask
-            # =========================
-            mask = torch.zeros((H, W), dtype=torch.float32, device=output.device)
+            masks = self.generate_random_masks(H, W)
 
             for top, left, h, w in masks:
                 mask[top:top+h, left:left+w] = 1.0
 
-            # =========================
-            # apply fill strategy
-            # =========================
-            output[b:b+1] = self.fill_strategy.fill(output[b:b+1], mask)
+            output[b] = self.fill_strategy.fill(
+                output[b:b+1],
+                mask
+            )
 
         return [output, cover_image]
