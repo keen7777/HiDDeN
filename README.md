@@ -225,4 +225,6 @@ python main.py new --name '3k_combined_inpainting' --data-dir /home/keen/HiDDeN/
 python main.py new --name '3k_combined_inpainting' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'maskinpainting(0.9,10,8,3.0,mean,42)+maskinpainting(0.9,10,8,3.0,random,42)' --tensorboard 
 
 
-python main.py new --name '3k_learn_inpainting' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'LearnableInpainting(0.1,0.3,32)' --tensorboard 
+python main.py new --name '3k_learn_inpainting' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'learnableinpainting(0.1,0.3,32)' --tensorboard 
+
+python main.py new --name '3k_learn_inpainting_union_mask' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'learnableinpainting(0.1,0.4,32)' --tensorboard 

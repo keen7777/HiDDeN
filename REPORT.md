@@ -90,7 +90,12 @@ python sweep.py   -d images   -r runs   --run-name "3k_baseline 2026.05.13--12-1
 
 --noise learnableinpainting(0.1,0.3,32)
 
-python sweep.py   -d images   -r runs   --run-name "3k_baseline 2026.05.13--12-17-40"   --attack learnableinpainting   --min 0.1 --max 0.9 --steps 9
+
+
+# check baseline model VS learn_inpainting_model, using patchmatch attack
+python sweep.py   -d images   -r runs   --run-name "3k_baseline 2026.05.13--12-17-40"   --attack maskinpainting   --min 0.1 --max 0.9 --steps 9
+
+python sweep.py   -d images   -r runs   --run-name "3k_learn_inpainting 2026.05.25--05-19-37"   --attack maskinpainting   --min 0.1 --max 0.9 --steps 9
 
 # test learnable performance on other method: patchmatch
 python sweep.py   -d images   -r runs   --run-name "3k_learn_inpainting 2026.05.25--05-19-37"   --attack maskinpainting   --min 0.1 --max 0.9 --steps 9

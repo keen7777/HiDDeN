@@ -89,13 +89,11 @@ def parse_learnable_inpainting(command):
     """
     Example:
         learnableinpainting(0.1,0.3,32)
-
     means:
         min_mask_ratio = 0.1
         max_mask_ratio = 0.3
         hidden_channels = 32
     """
-
     matches = re.match(
         r'learnableinpainting\((\d+\.*\d*),(\d+\.*\d*),(\d+)\)',
         command
