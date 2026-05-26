@@ -175,10 +175,10 @@ def main():
                               write_header=write_csv_header)
         write_csv_header = False
 
-        with open("evaluation_results.json", "w") as f:
+        with open(f"evaluation_{model_name}_results.json", "w") as f:
             json.dump(all_results, f, indent=4)
 
-        print("Saved evaluation results to evaluation_results.json")
+        print(f"Saved evaluation {run_name} results to evaluation_{model_name}_results.json")
 
     # train(model, device, hidden_config, train_options, this_run_folder, tb_logger)
 

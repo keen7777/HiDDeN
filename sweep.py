@@ -16,8 +16,8 @@ from noise_layers.dropout import Dropout
 from noise_layers.crop import Crop
 from noise_layers.resize import Resize
 from noise_layers.jpeg_compression import JpegCompression
-from noise_layers.mask_inpainting import MaskInpainting
-from noise_layers.mask_inpainting_telea import MaskInpaintingTelea
+from noise_layers.eval_inpainting import EvalInpainting
+from archive.mask_inpainting_telea import MaskInpaintingTelea
 
 from noise_layers.fill_strategies.mean_fill import MeanFill
 from noise_layers.fill_strategies.random_fill import RandomNeighborFill
@@ -61,7 +61,7 @@ def build_noise_layer(name, s, debug = False):
         return Resize((s, s))
     
     if name == "maskinpainting":
-        return MaskInpainting(
+        return EvalInpainting(
         max_mask_ratio=s,
         max_mask_number=20,
         min_mask_size=8,
@@ -180,7 +180,7 @@ def main():
 
             
 
-            save_dir = f"debug_psnr_model_{model_name}_attack_{args.attack}_range_{args.min}_{args.max}"
+            save_dir = f"debug_M_{model_name}_A_{args.attack}_R_{args.min}_{args.max}"
             os.makedirs(save_dir, exist_ok=True)
 
             for idx in range(min(1, cover.size(0))):
@@ -209,7 +209,7 @@ def main():
 
         print(f"PSNR={psnr_meter.avg:.4f}, SSIM={ssim_meter.avg:.4f}, BER={ber_meter.avg:.6f}")
 
-    out_file = f"sweep_{model_name}_{args.attack}_range_{args.min}_{args.max}.json"
+    out_file = f"sweep_M_{model_name}_A_{args.attack}_R_{args.min}_{args.max}.json"
 
     with open(out_file, "w") as f:
         json.dump(results, f, indent=4)

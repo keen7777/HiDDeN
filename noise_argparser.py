@@ -8,9 +8,9 @@ from noise_layers.resize import Resize
 from noise_layers.quantization import Quantization
 from noise_layers.jpeg_compression import JpegCompression
 # adding new attacking methods:
-from noise_layers.mask_inpainting import MaskInpainting
-from noise_layers.mask_inpainting_telea import MaskInpaintingTelea
-from noise_layers.pattern_matching import PatternMatching
+from noise_layers.eval_inpainting import EvalInpainting
+from archive.mask_inpainting_telea import MaskInpaintingTelea
+from noise_layers.haar_wavelet import HaarWavelet
 
 from noise_layers.fill_strategies.mean_fill import MeanFill
 from noise_layers.fill_strategies.random_fill import RandomNeighborFill
@@ -72,20 +72,7 @@ def parse_resize(resize_command):
     max_ratio = float(ratios[1])
     return Resize((min_ratio, max_ratio))
 
-##adding new command:
-'''
-def parse_maskinpainting(inpainting_command):
-    matches = re.match(r'maskinpainting\((\d+\.*\d*),(\d+\.*\d*),(\d+)\)', inpainting_command)
-    if not matches:
-        raise ValueError(f"Invalid maskinpainting command: {inpainting_command}")
-    min_ratio = float(matches.group(1))
-    max_ratio = float(matches.group(2))
-    seed = int(matches.group(3))
-    return MaskInpainting(min_ratio, max_ratio,seed)
-'''
-
 def parse_learnable_inpainting(command):
-
     """
     Example:
         learnableinpainting(0.1,0.3,32)
@@ -114,8 +101,9 @@ def parse_learnable_inpainting(command):
         hidden_channels=hidden_channels
     )
 
-# redo inpainting:
-def parse_maskinpainting(inpainting_command: str):
+# redo mask inpainting, just for evaluation/validation/test
+# use telea, randomneighbor, patchmatch,:
+def parse_eval_inpainting(inpainting_command: str):
     """
     Example:
     maskinpainting(0.5,10,8,3.0,mean,42)
@@ -128,11 +116,11 @@ def parse_maskinpainting(inpainting_command: str):
     """
 
     # 1. basic format check
-    if not inpainting_command.startswith("maskinpainting(") or not inpainting_command.endswith(")"):
+    if not inpainting_command.startswith("evalinpainting(") or not inpainting_command.endswith(")"):
         raise ValueError(f"Invalid command format: {inpainting_command}")
 
     # 2. remove wrapper
-    content = inpainting_command[len("maskinpainting("):-1]
+    content = inpainting_command[len("evalinpainting("):-1]
 
     # 3. split parameters
     parts = [p.strip() for p in content.split(",")]
@@ -140,7 +128,7 @@ def parse_maskinpainting(inpainting_command: str):
     if len(parts) != 6:
         raise ValueError(
             "Expected format: "
-            "maskinpainting(max_ratio,max_num,min_size,max_ar,fill,seed)"
+            "evalinpainting(max_ratio,max_num,min_size,max_ar,fill,seed)"
         )
 
     # 4. parse parameters
@@ -159,7 +147,7 @@ def parse_maskinpainting(inpainting_command: str):
 
     print("DEBUG fill_strategy:", type(fill_strategy), fill_strategy)
     # 6. build model
-    return MaskInpainting(
+    return EvalInpainting(
         max_mask_ratio=max_ratio,
         max_mask_number=max_num,
         min_mask_size=min_size,
@@ -168,28 +156,20 @@ def parse_maskinpainting(inpainting_command: str):
         seed=seed,
     )
 
-##adding new command inpaintingtelea:
-def parse_maskinpainting_telea(inpainting_telea_command):
-    matches = re.match(r'teleamaskinpainting\((\d+\.*\d*),(\d+\.*\d*),(\d+)\)', inpainting_telea_command)
-    if not matches:
-        raise ValueError(f"Invalid telea maskinpainting command: {inpainting_telea_command}")
-    min_ratio = float(matches.group(1))
-    max_ratio = float(matches.group(2))
-    seed = int(matches.group(3))
-    return MaskInpaintingTelea(min_ratio, max_ratio,seed)
+
+
+def parse_haarwavelet(haarwavelet_command):
+    matches = re.match(r'haarwavelet\((\d+\.*\d*)\)', haarwavelet_command)
+    strength = float(matches.groups()[0])
+
+    return HaarWavelet(
+        strength=strength,
+        mode="attenuate",
+        attack_bands=("LH", "HL", "HH")
+    )
 
 
 
-# TODO copy paste from mask inpainting for now.
-def parse_patternmatching(matching_command):
-    matches = re.match(r'patternmatch\((\d+\.*\d*)\)', matching_command)
-    ratio = float(matches.groups()[0])
-    return PatternMatching(ratio)
-
-def parse_adversarialattack(adversarial_command):
-    matches = re.match(r'adversarialattack\((\d+\.*\d*)\)', adversarial_command)
-    ratio = float(matches.groups()[0])
-    return PatternMatching(ratio)
 
 class NoiseArgParser(argparse.Action):
     def __init__(self,
@@ -242,10 +222,8 @@ class NoiseArgParser(argparse.Action):
             elif command[:len('resize')] == 'resize':
                 layers.append(parse_resize(command))
             # TODO adding own method
-            elif command[:len('maskinpainting')] == 'maskinpainting':
-                layers.append(parse_maskinpainting(command))
-            elif command[:len('teleamaskinpainting')] == 'teleamaskinpainting':
-                layers.append(parse_maskinpainting_telea(command))
+            elif command[:len('evalinpainting')] == 'evalinpainting':
+                layers.append(parse_eval_inpainting(command))
             elif command.startswith('learnableinpainting'):
                 layers.append(parse_learnable_inpainting(command))
             elif command[:len('jpeg')] == 'jpeg':
