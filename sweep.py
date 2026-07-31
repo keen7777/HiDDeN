@@ -81,8 +81,9 @@ def build_noise_layer(name, s, debug = False):
         fill_strategy=None,
         seed=None,
     
-    if name == "teleamaskinpainting":
-        return MaskInpaintingTelea(s,s)
+    # archieved
+    # if name == "teleamaskinpainting":
+    #    return MaskInpaintingTelea(s,s)
 
     if name == "jpeg":
         # IMPORTANT: map strength -> keep coefficients

@@ -228,3 +228,8 @@ python main.py new --name '3k_combined_inpainting' --data-dir /home/keen/HiDDeN/
 python main.py new --name '3k_learn_inpainting' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'learnableinpainting(0.1,0.3,32)' --tensorboard 
 
 python main.py new --name '3k_learn_inpainting_union_mask' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'learnableinpainting(0.1,0.4,32)' --tensorboard 
+
+# haar wavelet
+python main.py new --name '3k_haar_wavelet' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'haarwavelet(0.4)' --tensorboard 
+# gaussian blur
+python main.py new --name '3k_gaussian_blur' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'gaussianblur(0.5,2.0)' --tensorboard 

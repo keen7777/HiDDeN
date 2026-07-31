@@ -4,7 +4,7 @@ from PIL import Image
 import torchvision.transforms as T
 
 
-def inpainting(image, mask_min=0.2, mask_max=0.4, seed=42):
+def inpainting(image, mask_min=0.01, mask_max=0.05, seed=13):
     """
     image: torch.Tensor (C, H, W)
     return: torch.Tensor (C, H, W)
@@ -49,7 +49,7 @@ def inpainting(image, mask_min=0.2, mask_max=0.4, seed=42):
 if __name__ == "__main__":
     # read img
     input_path = "../../images/train/train_class/000000000009.jpg"   #first image
-    output_path = "validation_results/inpainting_000000000009.png"
+    output_path = "validation_results/inpainting_000000000009_small.png"
 
     img = Image.open(input_path).convert("RGB")
 

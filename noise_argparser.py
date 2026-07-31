@@ -8,19 +8,24 @@ from noise_layers.resize import Resize
 from noise_layers.quantization import Quantization
 from noise_layers.jpeg_compression import JpegCompression
 # adding new attacking methods:
-from noise_layers.eval_inpainting import EvalInpainting
-from archive.mask_inpainting_telea import MaskInpaintingTelea
-from noise_layers.haar_wavelet import HaarWavelet
 
+# from archive.mask_inpainting_telea import MaskInpaintingTelea
+from noise_layers.haar_wavelet import HaarWavelet
+from noise_layers.gaussian_blur import GaussianBlur
+from noise_layers.learnable_inpainting import LearnableInpainting
+
+# maybe need to delete resnet and diffusion
+from noise_layers.eval_inpainting import EvalInpainting
 from noise_layers.fill_strategies.mean_fill import MeanFill
 from noise_layers.fill_strategies.random_fill import RandomNeighborFill
+# add naive stoke, and other evaluate method??
 from noise_layers.fill_strategies.blur_fill import BlurFill
 from noise_layers.fill_strategies.telea_fill import TeleaFill
 from noise_layers.fill_strategies.patchmatch_fill import PatchMatchFill
+# need pre-trained model? and other parameters???
 from noise_layers.fill_strategies.resnet_fill import ResNetFill
 from noise_layers.fill_strategies.diffusion_fill import DiffusionFill
-### fuck
-from noise_layers.learnable_inpainting import LearnableInpainting
+
 
 # map string -> class
 FILL_MAP = {
@@ -157,8 +162,7 @@ def parse_eval_inpainting(inpainting_command: str):
     )
 
 
-
-def parse_haarwavelet(haarwavelet_command):
+def parse_haar_wavelet(haarwavelet_command):
     matches = re.match(r'haarwavelet\((\d+\.*\d*)\)', haarwavelet_command)
     strength = float(matches.groups()[0])
 
@@ -168,7 +172,28 @@ def parse_haarwavelet(haarwavelet_command):
         attack_bands=("LH", "HL", "HH")
     )
 
+def parse_gaussian_blur(gaussian_blur_command):
+    matches = re.match(
+        r'gaussianblur\((\d+\.*\d*)(,\d+\.*\d*)?\)',
+        gaussian_blur_command
+    )
 
+    first = float(matches.groups()[0])
+    second = matches.groups()[1]
+
+    if second is None:
+        # Fixed sigma, useful for eval / sweep
+        return GaussianBlur(
+            sigma=first
+        )
+    else:
+        # Random sigma range, useful for training
+        second = float(second.replace(',', ''))
+
+        return GaussianBlur(
+            sigma=None,
+            sigma_range=(first, second)
+        )
 
 
 class NoiseArgParser(argparse.Action):
@@ -213,24 +238,29 @@ class NoiseArgParser(argparse.Action):
         for command in split_commands:
             # remove all whitespace
             command = command.replace(' ', '')
-            if command[:len('cropout')] == 'cropout':
+            if command.startswith('cropout'):
                 layers.append(parse_cropout(command))
-            elif command[:len('crop')] == 'crop':
+            elif command.startswith('crop'):
                 layers.append(parse_crop(command))
-            elif command[:len('dropout')] == 'dropout':
+            elif command.startswith('dropout'):
                 layers.append(parse_dropout(command))
-            elif command[:len('resize')] == 'resize':
+            elif command.startswith('resize'):
                 layers.append(parse_resize(command))
-            # TODO adding own method
-            elif command[:len('evalinpainting')] == 'evalinpainting':
+            # Keen: adding own method
+            elif command.startswith('evalinpainting'):
                 layers.append(parse_eval_inpainting(command))
             elif command.startswith('learnableinpainting'):
                 layers.append(parse_learnable_inpainting(command))
-            elif command[:len('jpeg')] == 'jpeg':
+            elif command.startswith('haarwavelet'):
+                layers.append(parse_haar_wavelet(command))
+            elif command.startswith('gaussianblur'):
+                layers.append(parse_gaussian_blur(command))
+            # modified to startwith
+            elif command.startswith('jpeg'):
                 layers.append('JpegPlaceholder')
-            elif command[:len('quant')] == 'quant':
+            elif command.startswith('quant'):
                 layers.append('QuantizationPlaceholder')
-            elif command[:len('identity')] == 'identity':
+            elif command.startswith('identity'):
                 # We are adding one Identity() layer in Noiser anyway
                 pass
             else:
