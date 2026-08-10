@@ -1,0 +1,45 @@
+{
+  "image_dir": "/home/keen/HiDDeN/images/val",
+  "output_dir": "/home/keen/HiDDeN/evaluation_data/opt_masks_diff_150_nlpe_100_den_0.3",
+  "total_images_found": 300,
+  "processed_images": 300,
+  "limit": null,
+  "height": 128,
+  "width": 128,
+  "crop_method": "torchvision.transforms.CenterCrop",
+  "image_value_range": [
+    0.0,
+    1.0
+  ],
+  "mask_convention": {
+    "true": "known/retained pixel",
+    "false": "missing/inpainted pixel"
+  },
+  "visualization_convention": {
+    "white": "known/retained pixel",
+    "black": "missing/inpainted pixel"
+  },
+  "density": 0.3,
+  "target_known_pixels": 4915,
+  "tau": 0.25,
+  "diffusion_iterations": 150,
+  "p": 0.1,
+  "q": 0.1,
+  "nlpe_iterations": 100,
+  "n_candidates": 10,
+  "base_seed": 42,
+  "save_visualizations": true,
+  "visualization_limit": 10,
+  "mean_seconds_per_image": 22.184538851753192,
+  "median_seconds_per_image": 22.14916578100201,
+  "total_seconds": 6656.996007401001,
+  "mean_ps_density": 0.29998779296875,
+  "mean_ps_nlpe_density": 0.29998779296875,
+  "mean_ps_full_mse": 0.0006008853172746577,
+  "mean_ps_nlpe_full_mse": 0.0005556755668437766,
+  "mean_ps_missing_region_mse": 0.0008583926269271943,
+  "mean_ps_nlpe_missing_region_mse": 0.0007938083954284102,
+  "mean_relative_full_mse_improvement_percent": 7.146975239729096,
+  "median_relative_full_mse_improvement_percent": 3.598153550002161,
+  "images_with_non_worse_nlpe_mse": 300
+}

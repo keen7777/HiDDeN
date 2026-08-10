@@ -14,6 +14,7 @@ import torch.nn.functional as F
 
 from options import HiDDenConfiguration, TrainingOptions
 from model.hidden import Hidden
+from optimization_mask_files.optimized_mask_test_dataset import OptimizedMaskTestDataset
 
 
 def image_to_tensor(image):
@@ -152,7 +153,34 @@ def get_data_loaders(hidden_config: HiDDenConfiguration, train_options: Training
 
     return train_loader, validation_loader
 
+def get_optimized_mask_test_loader(
+    hidden_config: HiDDenConfiguration,
+    train_options: TrainingOptions,
+    mask_file: str,
+    batch_size: int = 1,
+    num_workers: int = 4,
+):
+    """
+    Return a deterministic validation loader paired with
+    precomputed optimized masks.
+    """
 
+    validation_dataset = OptimizedMaskTestDataset(
+        image_folder=train_options.validation_folder,
+        mask_file=mask_file,
+        height=hidden_config.H,
+        width=hidden_config.W,
+    )
+
+    validation_loader = torch.utils.data.DataLoader(
+        validation_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+        pin_memory=torch.cuda.is_available(),
+    )
+
+    return validation_loader
 def log_progress(losses_accu):
     log_print_helper(losses_accu, logging.info)
 
