@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-# Learnable Corruption Network
+# fixed CNN Corruption Network
 class CorruptionNet(nn.Module):
 
     def __init__(self, hidden_channels=32):
@@ -86,10 +86,10 @@ class CorruptionNet(nn.Module):
         return out
 
 # Learnable Inpainting Layer
-class LearnableInpainting(nn.Module):
+class FixedCNNInpainting(nn.Module):
 
     """
-    Differentiable learnable inpainting corruption layer.
+    Differentiable fixed inpainting corruption layer.
     Main idea:
 
     Instead of using non-differentiable classical inpainting methods such as:

@@ -12,7 +12,7 @@ from noise_layers.jpeg_compression import JpegCompression
 # from archive.mask_inpainting_telea import MaskInpaintingTelea
 from noise_layers.haar_wavelet import HaarWavelet
 from noise_layers.gaussian_blur import GaussianBlur
-from noise_layers.learnable_inpainting import LearnableInpainting
+from noise_layers.fixed_cnn_inpainting import FixedCNNInpainting
 
 # maybe need to delete resnet and diffusion
 from noise_layers.eval_inpainting import EvalInpainting
@@ -77,7 +77,7 @@ def parse_resize(resize_command):
     max_ratio = float(ratios[1])
     return Resize((min_ratio, max_ratio))
 
-def parse_learnable_inpainting(command):
+def parse_fixed_cnn_inpainting(command):
     """
     Example:
         learnableinpainting(0.1,0.3,32)
@@ -100,7 +100,7 @@ def parse_learnable_inpainting(command):
     max_ratio = float(matches.group(2))
     hidden_channels = int(matches.group(3))
 
-    return LearnableInpainting(
+    return FixedCNNInpainting(
         min_ratio=min_ratio,
         max_ratio=max_ratio,
         hidden_channels=hidden_channels
@@ -249,8 +249,8 @@ class NoiseArgParser(argparse.Action):
             # Keen: adding own method
             elif command.startswith('evalinpainting'):
                 layers.append(parse_eval_inpainting(command))
-            elif command.startswith('learnableinpainting'):
-                layers.append(parse_learnable_inpainting(command))
+            elif command.startswith('fixedcnninpainting'):
+                layers.append(parse_fixed_cnn_inpainting(command))
             elif command.startswith('haarwavelet'):
                 layers.append(parse_haar_wavelet(command))
             elif command.startswith('gaussianblur'):

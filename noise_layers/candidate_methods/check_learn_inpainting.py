@@ -10,7 +10,7 @@ PROJECT_ROOT = os.path.abspath(
 )
 sys.path.insert(0, PROJECT_ROOT)
 
-from noise_layers.learnable_inpainting import LearnableInpainting
+from noise_layers.fixed_cnn_inpainting import FixedCNNInpainting
 
 
 def learnable_inpainting_check(
@@ -61,7 +61,7 @@ def learnable_inpainting_check(
     # 中文：这里会使用你 learnable_inpainting.py 里的 generate_mask()
     # English: This uses generate_mask() inside your LearnableInpainting class.
     # --------------------------------------------------
-    layer = LearnableInpainting(
+    layer = FixedCNNInpainting(
         min_ratio=mask_min,
         max_ratio=mask_max,
         hidden_channels=32,

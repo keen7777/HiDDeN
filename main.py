@@ -7,12 +7,14 @@ import utils
 import logging
 import sys
 
+
 from options import *
 from model.hidden import Hidden
 from noise_layers.noiser import Noiser
 from noise_argparser import NoiseArgParser
 from train import train
-
+from train_pretrained_cnn import pretrain_cnn
+from train_pretrained_unet import pretrain_unet
 
 def main():
     # device 设置
@@ -22,6 +24,150 @@ def main():
     # argparse 配置
     parent_parser = argparse.ArgumentParser(description='Training of HiDDeN nets')
     subparsers = parent_parser.add_subparsers(dest='command', help='Sub-parser for commands')
+
+    # 额外的模型，单独训练：
+    # =========================================================
+    # Pretrain CNN inpainting model
+    # =========================================================
+    pretrain_parser = subparsers.add_parser(
+        'pretrain-cnn',
+        help='Pretrain CNN reconstruction model for inpainting'
+    )
+
+    pretrain_parser.add_argument(
+        '--data-dir',
+        '-d',
+        required=True,
+        type=str,
+        help='Data directory containing train/ and val/.'
+    )
+
+    pretrain_parser.add_argument(
+        '--batch-size',
+        '-b',
+        required=True,
+        type=int,
+        help='Batch size.'
+    )
+
+    pretrain_parser.add_argument(
+        '--epochs',
+        '-e',
+        default=400,
+        type=int,
+        help='Number of CNN pretraining epochs.'
+    )
+
+    pretrain_parser.add_argument(
+        '--name',
+        default='pretrained_cnn',
+        type=str,
+        help='Experiment name.'
+    )
+
+    pretrain_parser.add_argument(
+        '--size',
+        '-s',
+        default=128,
+        type=int,
+        help='Image size.'
+    )
+
+    pretrain_parser.add_argument(
+        '--lr',
+        default=1e-4,
+        type=float
+    )
+
+    pretrain_parser.add_argument(
+        '--min-ratio',
+        default=0.1,
+        type=float
+    )
+
+    pretrain_parser.add_argument(
+        '--max-ratio',
+        default=0.5,
+        type=float
+    )
+
+    pretrain_parser.add_argument(
+        '--seed',
+        default=42,
+        type=int
+    )
+    # =========================================================
+    # Pretrain U-Net reconstruction model
+    # =========================================================
+
+    unet_parser = subparsers.add_parser(
+        "pretrain-unet",
+        help="Pretrain small U-Net inpainting model",
+    )
+
+    unet_parser.add_argument(
+        "--data-dir",
+        "-d",
+        required=True,
+        type=str,
+    )
+
+    unet_parser.add_argument(
+        "--batch-size",
+        "-b",
+        required=True,
+        type=int,
+    )
+
+    unet_parser.add_argument(
+        "--epochs",
+        "-e",
+        default=100,
+        type=int,
+    )
+
+    unet_parser.add_argument(
+        "--name",
+        default="3k_pretrained_unet",
+        type=str,
+    )
+
+    unet_parser.add_argument(
+        "--size",
+        "-s",
+        default=128,
+        type=int,
+    )
+
+    unet_parser.add_argument(
+        "--lr",
+        default=1e-4,
+        type=float,
+    )
+
+    unet_parser.add_argument(
+        "--min-ratio",
+        default=0.1,
+        type=float,
+    )
+
+    unet_parser.add_argument(
+        "--max-ratio",
+        default=0.5,
+        type=float,
+    )
+
+    unet_parser.add_argument(
+        "--mse-weight",
+        default=0.5,
+        type=float,
+    )
+
+    unet_parser.add_argument(
+        "--seed",
+        default=42,
+        type=int,
+    )
 
     # 新训练 run
     new_run_parser = subparsers.add_parser('new', help='starts a new run')
@@ -48,8 +194,55 @@ def main():
     continue_parser.add_argument('--epochs', '-e', required=False, type=int, help='Optional override number of epochs.')
 
     args = parent_parser.parse_args()
+    # =========================================================
+    # CNN reconstruction pretraining
+    # =========================================================
+
+    if args.command == 'pretrain-cnn':
+
+        pretrain_cnn(
+            device=device,
+            data_dir=args.data_dir,
+            batch_size=args.batch_size,
+            epochs=args.epochs,
+            experiment_name=args.name,
+            image_size=args.size,
+            lr=args.lr,
+            min_ratio=args.min_ratio,
+            max_ratio=args.max_ratio,
+            seed=args.seed,
+            runs_folder='./runs'
+        )
+
+        return
     checkpoint = None
     loaded_checkpoint_file_name = None
+
+    if args.command == "pretrain-unet":
+
+        pretrain_unet(
+            device=device,
+
+            data_dir=args.data_dir,
+            batch_size=args.batch_size,
+            epochs=args.epochs,
+
+            experiment_name=args.name,
+
+            image_size=args.size,
+
+            lr=args.lr,
+
+            min_ratio=args.min_ratio,
+            max_ratio=args.max_ratio,
+
+            mse_weight=args.mse_weight,
+
+            seed=args.seed,
+
+            runs_folder="./runs",
+        )
+        return
 
     # 判断新训练还是继续
     if args.command == 'continue':
