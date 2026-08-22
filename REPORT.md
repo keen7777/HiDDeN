@@ -40,8 +40,8 @@ python validate-trained-models.py \
   --run-name "3k_jpeg 2026.05.15--15-48-12"
 
 
-## sweep: baseline model to different attack:
-# base -> dropout
+# sweep: baseline model to different attack:
+## base -> dropout
 python sweep.py \
   -d images \
   -r runs \
@@ -99,3 +99,39 @@ python sweep.py   -d images   -r runs   --run-name "3k_learn_inpainting 2026.05.
 
 # test learnable performance on other method: patchmatch
 python sweep.py   -d images   -r runs   --run-name "3k_learn_inpainting 2026.05.25--05-19-37"   --attack maskinpainting   --min 0.1 --max 0.9 --steps 9
+
+# optimization mask 
+# sweep: baseline model to different attack:
+## 
+python evaluate_optimized_masks.py \
+    -d /home/keen/HiDDeN/images \
+    -r /home/keen/HiDDeN/runs \
+    --run-name "3k_learn_inpainting 2026.05.25--05-19-37" \
+    --diffusion-iterations 300
+
+python evaluate_optimized_masks.py \
+    -d /home/keen/HiDDeN/images \
+    -r /home/keen/HiDDeN/runs \
+    --run-name "3k_baseline 2026.05.13--12-17-40" \
+    --diffusion-iterations 300
+
+
+python evaluate_optimized_masks.py \
+    -d /home/keen/HiDDeN/images \
+    -r /home/keen/HiDDeN/runs \
+    --run-name "3k_baseline 2026.05.13--12-17-40" \
+    --mask-file /home/keen/HiDDeN/evaluation_data/opt_masks_diff_150_nlpe_100_den_0.1/val_ps_nlpe_masks_density_100.npy \
+    --diffusion-iterations 150 \
+    --save-images \
+    --save-image-limit 50 \
+    --save-mask-visuals
+
+python evaluate_optimized_masks.py \
+    -d /home/keen/HiDDeN/images \
+    -r /home/keen/HiDDeN/runs \
+    --run-name "3k_learn_inpainting 2026.05.25--05-19-37" \
+    --mask-file /home/keen/HiDDeN/evaluation_data/opt_masks_diff_150_nlpe_100_den_0.1/val_ps_nlpe_masks_density_100.npy \
+    --diffusion-iterations 150 \
+    --save-images \
+    --save-image-limit 50 \
+    --save-mask-visuals

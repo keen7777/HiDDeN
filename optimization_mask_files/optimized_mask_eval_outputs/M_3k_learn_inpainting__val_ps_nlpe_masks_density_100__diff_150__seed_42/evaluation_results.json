@@ -1,0 +1,26 @@
+{
+    "run_name": "3k_learn_inpainting 2026.05.25--05-19-37",
+    "checkpoint": "/home/keen/HiDDeN/runs/3k_learn_inpainting 2026.05.25--05-19-37/checkpoints/3k_learn_inpainting--epoch-400.pyt",
+    "mask_file": "/home/keen/HiDDeN/evaluation_data/opt_masks_diff_150_nlpe_100_den_0.1/val_ps_nlpe_masks_density_100.npy",
+    "mask_count": 300,
+    "mask_shape": [
+        300,
+        128,
+        128
+    ],
+    "mean_retained_density": 0.0999755859375,
+    "tau": 0.25,
+    "diffusion_iterations": 150,
+    "message_seed": 42,
+    "batch_size": 1,
+    "processed_images": 300,
+    "psnr": 26.2346826616923,
+    "ssim": 0.7638355356454849,
+    "ber": 0.3878888888888887,
+    "saved_visualizations": 50,
+    "output_dir": "./optimized_mask_eval_outputs/M_3k_learn_inpainting__val_ps_nlpe_masks_density_100__diff_150__seed_42",
+    "files": {
+        "summary_json": "./optimized_mask_eval_outputs/M_3k_learn_inpainting__val_ps_nlpe_masks_density_100__diff_150__seed_42/evaluation_results.json",
+        "per_image_metrics_json": "./optimized_mask_eval_outputs/M_3k_learn_inpainting__val_ps_nlpe_masks_density_100__diff_150__seed_42/per_image_metrics.json"
+    }
+}
