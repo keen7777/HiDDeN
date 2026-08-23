@@ -17,25 +17,17 @@ from noise_layers.jointly_cnn_inpainting import JointCNNInpainting
 # maybe need to delete resnet and diffusion
 from noise_layers.eval_inpainting import EvalInpainting
 from noise_layers.fill_strategies.mean_fill import MeanFill
-from noise_layers.fill_strategies.random_fill import RandomNeighborFill
 # add naive stoke, and other evaluate method??
-from noise_layers.fill_strategies.blur_fill import BlurFill
 from noise_layers.fill_strategies.telea_fill import TeleaFill
-from noise_layers.fill_strategies.patchmatch_fill import PatchMatchFill
-# need pre-trained model? and other parameters???
-from noise_layers.fill_strategies.resnet_fill import ResNetFill
-from noise_layers.fill_strategies.diffusion_fill import DiffusionFill
+from noise_layers.fill_strategies.shiftmap_fill import ShiftMapFill 
+
 
 
 # map string -> class
 FILL_MAP = {
     "mean": MeanFill,
-    "random": RandomNeighborFill,
-    "blur": BlurFill,
     "telea": TeleaFill,
-    "patchmatch": PatchMatchFill,
-    "resnet": ResNetFill,
-    "diffusion": DiffusionFill
+    "shiftmap": ShiftMapFill,
 }
 ### 
 # maybe also this one:

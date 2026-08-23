@@ -1,0 +1,76 @@
+{
+    "run_name": "3k_haar_wavelet 2026.05.26--12-12-55",
+    "model_name": "3k_haar_wavelet",
+    "checkpoint_epoch": 400,
+    "attack": "telea",
+    "seed": 42,
+    "num_images": 300,
+    "batch_size": 1,
+    "mask_convention": "1 = removed/reconstructed, 0 = retained/known",
+    "ratio_definition": "removal_ratio = fraction of image pixels removed before reconstruction",
+    "results": {
+        "0.100": {
+            "target_removal_ratio": 0.1,
+            "actual_removal_ratio": 0.09978108723958333,
+            "psnr": 25.851051642100018,
+            "ssim": 0.8584844728310903,
+            "ber": 0.06833333333333334
+        },
+        "0.200": {
+            "target_removal_ratio": 0.2,
+            "actual_removal_ratio": 0.1997991943359375,
+            "psnr": 23.537779261271158,
+            "ssim": 0.8089865718285243,
+            "ber": 0.0726666666666667
+        },
+        "0.300": {
+            "target_removal_ratio": 0.30000000000000004,
+            "actual_removal_ratio": 0.2998077392578125,
+            "psnr": 22.138118171691893,
+            "ssim": 0.7610854041576386,
+            "ber": 0.07722222222222228
+        },
+        "0.400": {
+            "target_removal_ratio": 0.4,
+            "actual_removal_ratio": 0.39980712890625,
+            "psnr": 20.688241386413573,
+            "ssim": 0.708029446999232,
+            "ber": 0.0827777777777779
+        },
+        "0.500": {
+            "target_removal_ratio": 0.5,
+            "actual_removal_ratio": 0.4997955322265625,
+            "psnr": 19.590000874201458,
+            "ssim": 0.6526297988494237,
+            "ber": 0.09788888888888907
+        },
+        "0.600": {
+            "target_removal_ratio": 0.6,
+            "actual_removal_ratio": 0.5997798665364583,
+            "psnr": 18.319766476949056,
+            "ssim": 0.594219780266285,
+            "ber": 0.11566666666666686
+        },
+        "0.700": {
+            "target_removal_ratio": 0.7000000000000001,
+            "actual_removal_ratio": 0.6998195393880209,
+            "psnr": 17.127486324310304,
+            "ssim": 0.5326360376675924,
+            "ber": 0.14022222222222233
+        },
+        "0.800": {
+            "target_removal_ratio": 0.8,
+            "actual_removal_ratio": 0.7998024495442708,
+            "psnr": 15.889474770228068,
+            "ssim": 0.4660449074208736,
+            "ber": 0.17866666666666675
+        },
+        "0.900": {
+            "target_removal_ratio": 0.9,
+            "actual_removal_ratio": 0.8998551432291667,
+            "psnr": 14.840496940612793,
+            "ssim": 0.4015252266824245,
+            "ber": 0.23822222222222228
+        }
+    }
+}

@@ -1,221 +1,1282 @@
 import os
-import argparse
-import torch
-import numpy as np
 import json
+import random
+import argparse
 
-
+import numpy as np
+import torch
 import torchvision.utils as vutils
+
 import utils
+
 from model.hidden import Hidden
 from average_meter import AverageMeter
-from evaluation.rgb_yuv_convert import convert_img_range
-from evaluation.psnr_ssim_evaluation import compute_psnr, compute_ssim
 
-from noise_layers.dropout import Dropout
-from noise_layers.crop import Crop
-from noise_layers.resize import Resize
-from noise_layers.jpeg_compression import JpegCompression
+from evaluation.rgb_yuv_convert import convert_img_range
+from evaluation.psnr_ssim_evaluation import (
+    compute_psnr,
+    compute_ssim,
+)
+
+from noise_layers.identity import Identity
 from noise_layers.eval_inpainting import EvalInpainting
-from archive.mask_inpainting_telea import MaskInpaintingTelea
 
 from noise_layers.fill_strategies.mean_fill import MeanFill
-from noise_layers.fill_strategies.random_fill import RandomNeighborFill
-from noise_layers.fill_strategies.blur_fill import BlurFill
 from noise_layers.fill_strategies.telea_fill import TeleaFill
-from noise_layers.fill_strategies.patchmatch_fill import PatchMatchFill
-from noise_layers.fill_strategies.resnet_fill import ResNetFill
-from noise_layers.fill_strategies.diffusion_fill import DiffusionFill
-from noise_layers.fill_strategies.generator import CorruptionGenerator
-from noise_layers.jointly_cnn_inpainting import JointCNNInpainting
+from noise_layers.fill_strategies.navier_stokes_fill import NavierStokesFill
+from noise_layers.fill_strategies.shiftmap_fill import ShiftMapFill
 
-# map string -> class
+
+# ============================================================
+# EXTERNAL EVALUATION ATTACKS
+# ============================================================
+#
+# Inpainting attacks all use the SAME random rectangle
+# removal-mask generator implemented inside EvalInpainting.
+#
+# Mask convention:
+#
+#   removal_mask = 1 -> pixel is removed / reconstructed
+#   removal_mask = 0 -> pixel is retained / known
+#
+# Identity is used separately for clean evaluation:
+#
+#   encoded image -> Identity -> decoder
+#
+# ============================================================
+
 FILL_MAP = {
     "mean": MeanFill,
-    "random": RandomNeighborFill,
-    "blur": BlurFill,
     "telea": TeleaFill,
-    "patchmatch": PatchMatchFill,
-    "resnet": ResNetFill,
-    "diffusion": DiffusionFill,
-    "generator": CorruptionGenerator()
+    "navier": NavierStokesFill,
+    "shiftmap": ShiftMapFill,
 }
 
 
-# =========================
-# BUILD NOISE LAYER (FIXED)
-# =========================
-def build_noise_layer(name, s, debug = False):
+AVAILABLE_ATTACKS = [
+    "identity",
+    "mean",
+    "telea",
+    "navier",
+    "shiftmap",
+]
 
-    
-    # s means attacking strength
 
-    if name == "dropout":
-        # FIXED version: deterministic sweep
-        return Dropout((s, s))
+# ============================================================
+# BUILD EXTERNAL ATTACK
+# ============================================================
 
-    if name == "crop":
-        return Crop((s, s), (s, s))
+def build_external_attack(
+    name,
+    removal_ratio,
+    seed,
+):
+    """
+    Build one external evaluation attack.
 
-    if name == "resize":
-        return Resize((s, s))
-    
-    if name == "maskinpainting":
-        return EvalInpainting(
-        max_mask_ratio=s,
-        max_mask_number=20,
-        min_mask_size=8,
-        max_aspect_ratio=3.0,
-        fill_strategy=PatchMatchFill(),   
-        randomize_ratio=False,
-        seed=42
-    )
+    Parameters
+    ----------
+    name : str
+        One of:
+            identity
+            mean
+            telea
+            navier
+            shiftmap
 
-    if name == "learnableinpainting":
-        return JointCNNInpainting(s,s,32)
-    
-    #   max_mask_ratio=0.5,
-        max_mask_number=10,
-        min_mask_size=8,
-        max_aspect_ratio=3.0,
-        fill_strategy=None,
-        seed=None,
-    
-    # archieved
-    # if name == "teleamaskinpainting":
-    #    return MaskInpaintingTelea(s,s)
+    removal_ratio : float
+        Fraction of image pixels removed before reconstruction.
 
-    if name == "jpeg":
-        # IMPORTANT: map strength -> keep coefficients
-        # higher s = stronger compression
-        s = 1 - s
-        keep = int(64 * s)
-        keep = max(1, min(64, keep))
+        Only relevant for inpainting attacks.
 
-        return JpegCompression(
-            device="cpu",
-            yuv_keep_weights=(keep, max(1, keep // 3), max(1, keep // 3))
+        Example:
+            0.1 -> approximately 10% removed
+            0.9 -> approximately 90% removed
+
+    seed : int
+        Seed used for deterministic mask generation.
+
+    Returns
+    -------
+    nn.Module
+        External evaluation distortion.
+    """
+
+    # ========================================================
+    # CLEAN / IDENTITY EVALUATION
+    # ========================================================
+
+    if name == "identity":
+        return Identity()
+
+    # ========================================================
+    # INPAINTING ATTACKS
+    # ========================================================
+
+    if name not in FILL_MAP:
+        raise ValueError(
+            f"Unknown attack '{name}'. "
+            f"Available attacks: {AVAILABLE_ATTACKS}"
         )
 
-    raise ValueError(f"Unknown attack: {name}")
+    fill_strategy = FILL_MAP[name]()
+
+    attack = EvalInpainting(
+        max_mask_ratio=removal_ratio,
+
+        # Random rectangle-mask parameters.
+        max_mask_number=100,
+        min_mask_size=8,
+        max_aspect_ratio=3.0,
+
+        fill_strategy=fill_strategy,
+
+        # Sweep uses exactly the requested removal ratio
+        # rather than randomly sampling one.
+        randomize_ratio=False,
+
+        # Same seed:
+        # same model/image/ratio -> same mask sequence.
+        seed=seed,
+    )
+
+    return attack
 
 
-# =========================
+# ============================================================
+# LOAD MODEL FOR EXTERNAL EVALUATION
+# ============================================================
+
+def load_model_for_external_eval(
+    hidden_config,
+    checkpoint,
+    device,
+    external_noiser,
+):
+    """
+    Load a trained HiDDeN model while replacing its original
+    training noiser with an external evaluation attack.
+
+    Important
+    ---------
+    We restore:
+        - trained encoder
+        - trained decoder
+        - trained discriminator
+
+    We deliberately DO NOT restore:
+        - the original training noiser
+        - optimizer state
+
+    This is necessary for runs such as the frozen pretrained
+    U-Net model, where the training noiser itself contains
+    registered parameters.
+
+    External evaluation should instead use the externally
+    supplied attack:
+        Identity
+        MeanFill
+        Telea
+        Navier-Stokes
+        ShiftMap
+    """
+
+    model = Hidden(
+        hidden_config,
+        device,
+        external_noiser,
+        tb_logger=None,
+    )
+
+    # --------------------------------------------------------
+    # Encoder / decoder checkpoint
+    # --------------------------------------------------------
+
+    checkpoint_state = checkpoint[
+        "enc-dec-model"
+    ]
+
+    # Remove all parameters belonging to the TRAINING noiser.
+    filtered_state = {
+        key: value
+        for key, value in checkpoint_state.items()
+        if not key.startswith("noiser.")
+    }
+
+    load_result = (
+        model.encoder_decoder.load_state_dict(
+            filtered_state,
+            strict=False,
+        )
+    )
+
+    # --------------------------------------------------------
+    # Verify checkpoint compatibility
+    # --------------------------------------------------------
+    #
+    # Missing noiser keys are expected because we deliberately
+    # replace the training noiser.
+    #
+    # Any other missing/unexpected keys are suspicious.
+    # --------------------------------------------------------
+
+    bad_missing = [
+        key
+        for key in load_result.missing_keys
+        if not key.startswith("noiser.")
+    ]
+
+    bad_unexpected = [
+        key
+        for key in load_result.unexpected_keys
+        if not key.startswith("noiser.")
+    ]
+
+    if bad_missing or bad_unexpected:
+        raise RuntimeError(
+            "Unexpected checkpoint mismatch.\n"
+            f"Missing keys: {bad_missing}\n"
+            f"Unexpected keys: {bad_unexpected}"
+        )
+
+    # --------------------------------------------------------
+    # Restore discriminator
+    # --------------------------------------------------------
+
+    if "discrim-model" in checkpoint:
+        model.discriminator.load_state_dict(
+            checkpoint["discrim-model"]
+        )
+
+    # --------------------------------------------------------
+    # Evaluation mode
+    # --------------------------------------------------------
+
+    model.encoder_decoder.eval()
+
+    if hasattr(model, "discriminator"):
+        model.discriminator.eval()
+
+    return model
+
+
+# ============================================================
+# HELPER
+# ============================================================
+
+def to_float(value):
+    """
+    Convert a PyTorch scalar or numeric value to Python float.
+    """
+
+    if torch.is_tensor(value):
+        return (
+            value
+            .detach()
+            .cpu()
+            .item()
+        )
+
+    return float(value)
+
+
+# ============================================================
 # MAIN
-# =========================
+# ============================================================
+
 def main():
+
+    # ========================================================
+    # DEVICE
+    # ========================================================
+    #
+    # Classical reconstruction methods use OpenCV on CPU.
+    # Keeping the complete evaluation on CPU also simplifies
+    # reproducibility.
+    # ========================================================
 
     device = torch.device("cpu")
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--data-dir", required=True)
-    parser.add_argument("-r", "--runs_root", default="./runs")
-    parser.add_argument("--run-name", required=True)
+    # ========================================================
+    # ARGUMENTS
+    # ========================================================
 
-    parser.add_argument("--attack", type=str, required=True)
-    parser.add_argument("--min", type=float, default=0.1)
-    parser.add_argument("--max", type=float, default=1.0)
-    parser.add_argument("--steps", type=int, default=10)
-    parser.add_argument("--debug", action="store_true")
+    parser = argparse.ArgumentParser(
+        description=(
+            "External robustness evaluation "
+            "for trained HiDDeN models."
+        )
+    )
+
+    # --------------------------------------------------------
+    # Dataset
+    # --------------------------------------------------------
+
+    parser.add_argument(
+        "-d",
+        "--data-dir",
+        required=True,
+        type=str,
+        help=(
+            "Dataset root containing the val folder."
+        ),
+    )
+
+    # --------------------------------------------------------
+    # Trained model
+    # --------------------------------------------------------
+
+    parser.add_argument(
+        "-r",
+        "--runs-root",
+        "--runs_root",
+        dest="runs_root",
+        default="./runs",
+        type=str,
+        help=(
+            "Root directory containing trained runs."
+        ),
+    )
+
+    parser.add_argument(
+        "--run-name",
+        required=True,
+        type=str,
+        help=(
+            "Exact trained run folder name."
+        ),
+    )
+
+    # --------------------------------------------------------
+    # External attack
+    # --------------------------------------------------------
+
+    parser.add_argument(
+        "--attack",
+        required=True,
+        type=str,
+        choices=AVAILABLE_ATTACKS,
+        help=(
+            "External evaluation attack."
+        ),
+    )
+
+    # --------------------------------------------------------
+    # Removal ratio sweep
+    # --------------------------------------------------------
+
+    parser.add_argument(
+        "--min-ratio",
+        "--min",
+        dest="min_ratio",
+        type=float,
+        default=0.1,
+        help=(
+            "Minimum fraction of pixels removed."
+        ),
+    )
+
+    parser.add_argument(
+        "--max-ratio",
+        "--max",
+        dest="max_ratio",
+        type=float,
+        default=0.9,
+        help=(
+            "Maximum fraction of pixels removed."
+        ),
+    )
+
+    parser.add_argument(
+        "--steps",
+        type=int,
+        default=9,
+        help=(
+            "Number of removal ratios in the sweep."
+        ),
+    )
+
+    # --------------------------------------------------------
+    # Reproducibility
+    # --------------------------------------------------------
+
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+        help=(
+            "Seed used for messages, masks, "
+            "and evaluation randomness."
+        ),
+    )
+
+    # --------------------------------------------------------
+    # Batch size
+    # --------------------------------------------------------
+
+    parser.add_argument(
+        "--batch-size",
+        "-b",
+        type=int,
+        default=1,
+        help=(
+            "Evaluation batch size. "
+            "Batch size 1 is recommended "
+            "for final evaluation."
+        ),
+    )
+
+    # --------------------------------------------------------
+    # Output
+    # --------------------------------------------------------
+
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        default="sweep_results",
+        help=(
+            "Directory used to save JSON results "
+            "and debug images."
+        ),
+    )
+
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help=(
+            "Save example cover / encoded / attacked "
+            "/ mask images."
+        ),
+    )
 
     args = parser.parse_args()
 
-    run_path = os.path.join(args.runs_root, args.run_name)
+    # ========================================================
+    # ARGUMENT VALIDATION
+    # ========================================================
 
-    options_file = os.path.join(run_path, "options-and-config.pickle")
-    train_options, hidden_config, noise_config = utils.load_options(options_file)
+    if not (
+        0.0
+        <= args.min_ratio
+        <= args.max_ratio
+        <= 1.0
+    ):
+        raise ValueError(
+            "Require "
+            "0 <= min_ratio <= max_ratio <= 1."
+        )
 
-    train_options.validation_folder = os.path.join(args.data_dir, "val")
+    if args.steps < 1:
+        raise ValueError(
+            "--steps must be >= 1."
+        )
 
-    checkpoint, _ = utils.load_last_checkpoint(os.path.join(run_path, "checkpoints"))
+    # ========================================================
+    # OUTPUT DIRECTORY
+    # ========================================================
 
-    strengths = np.linspace(args.min, args.max, args.steps)
-    model_name = args.run_name.split(" ")[0]
-    results = {}
+    os.makedirs(
+        args.output_dir,
+        exist_ok=True,
+    )
 
-    for s in strengths:
+    # ========================================================
+    # LOAD RUN CONFIGURATION
+    # ========================================================
 
-        print(f"\n===== {args.attack} | strength={s:.3f} =====")
-        
+    run_path = os.path.join(
+        args.runs_root,
+        args.run_name,
+    )
 
-        noise_layer = build_noise_layer(args.attack, s, debug=args.debug)
-        noiser = noise_layer
+    options_file = os.path.join(
+        run_path,
+        "options-and-config.pickle",
+    )
 
-        model = Hidden(hidden_config, device, noiser, tb_logger=None)
-        utils.model_from_checkpoint(model, checkpoint)
+    (
+        train_options,
+        hidden_config,
+        noise_config,
+    ) = utils.load_options(
+        options_file
+    )
 
-        _, val_data = utils.get_data_loaders(hidden_config, train_options)
+    # Evaluation uses the validation set only.
+    train_options.validation_folder = (
+        os.path.join(
+            args.data_dir,
+            "val",
+        )
+    )
 
-        psnr_meter = AverageMeter()
-        ssim_meter = AverageMeter()
-        ber_meter = AverageMeter()
+    train_options.batch_size = (
+        args.batch_size
+    )
 
-        for image, _ in val_data:
+    # ========================================================
+    # LOAD CHECKPOINT
+    # ========================================================
 
-            image = image.to(device)
+    checkpoint, checkpoint_file = (
+        utils.load_last_checkpoint(
+            os.path.join(
+                run_path,
+                "checkpoints",
+            )
+        )
+    )
 
-            message = torch.randint(
-                0, 2,
-                (image.size(0), hidden_config.message_length)
-            ).float().to(device)
+    # ========================================================
+    # PRINT CONFIGURATION
+    # ========================================================
 
-            losses, (encoded_images, noised_images, decoded) = model.validate_on_batch([image, message])
+    print("=" * 60)
+    print("EXTERNAL ROBUSTNESS EVALUATION")
+    print("=" * 60)
 
-            cover = convert_img_range(image)
-            encoded_images = convert_img_range(encoded_images)
-            noised_images = convert_img_range(noised_images)
+    print(
+        f"Run: "
+        f"{args.run_name}"
+    )
 
-            # 🔥 final safety clamp (IMPORTANT)
-            cover = torch.clamp(cover, 0, 1)
-            encoded_images = torch.clamp(encoded_images, 0, 1)
-            noised_images = torch.clamp(noised_images, 0, 1)
+    print(
+        f"Checkpoint: "
+        f"{checkpoint_file}"
+    )
 
-            psnr_meter.update(compute_psnr(cover, noised_images).item())
-            ssim_meter.update(compute_ssim(cover, noised_images).item())
+    print(
+        f"Checkpoint epoch: "
+        f"{checkpoint['epoch']}"
+    )
 
-            ber_meter.update(losses["bitwise-error  "])
+    print(
+        f"Attack: "
+        f"{args.attack}"
+    )
 
-            # =========================
-            # DEBUG SAVE (ADD HERE)
-            # =========================
+    print(
+        f"Seed: "
+        f"{args.seed}"
+    )
 
-            
+    print(
+        f"Device: "
+        f"{device}"
+    )
 
-            save_dir = f"debug_M_{model_name}_A_{args.attack}_R_{args.min}_{args.max}"
-            os.makedirs(save_dir, exist_ok=True)
+    print("=" * 60)
 
-            for idx in range(min(1, cover.size(0))):
-                vutils.save_image(
-                    cover[idx],
-                    f"{save_dir}/cover_{float(s):.3f}_{idx}.png"
+    # ========================================================
+    # VALIDATION LOADER
+    # ========================================================
+
+    _, val_data = (
+        utils.get_data_loaders(
+            hidden_config,
+            train_options,
+        )
+    )
+
+    file_count = len(
+        val_data.dataset
+    )
+
+    print(
+        f"Validation images: "
+        f"{file_count}"
+    )
+
+    # ========================================================
+    # FIXED WATERMARK MESSAGES
+    # ========================================================
+    #
+    # Generate ALL validation messages exactly once.
+    #
+    # Therefore validation image i receives exactly the same
+    # watermark message:
+    #
+    #   across removal ratios
+    #   across reconstruction methods
+    #   across trained models
+    #   during identity evaluation
+    #
+    # The message RNG is independent of attack RNG.
+    # ========================================================
+
+    message_generator = (
+        torch.Generator(
+            device="cpu"
+        )
+    )
+
+    message_generator.manual_seed(
+        args.seed
+    )
+
+    fixed_messages = torch.randint(
+        low=0,
+        high=2,
+        size=(
+            file_count,
+            hidden_config.message_length,
+        ),
+        generator=message_generator,
+        dtype=torch.float32,
+    )
+
+    print(
+        f"Fixed messages generated "
+        f"for {file_count} images."
+    )
+
+    # ========================================================
+    # REMOVAL RATIOS
+    # ========================================================
+    #
+    # Identity:
+    #   Only run once at ratio 0.
+    #
+    # Inpainting:
+    #   Run the requested sweep.
+    # ========================================================
+
+    if args.attack == "identity":
+
+        removal_ratios = [
+            0.0
+        ]
+
+    else:
+
+        removal_ratios = np.linspace(
+            args.min_ratio,
+            args.max_ratio,
+            args.steps,
+        )
+
+    # ========================================================
+    # MODEL NAME
+    # ========================================================
+
+    model_name = (
+        args.run_name.split(" ")[0]
+    )
+
+    # ========================================================
+    # RESULT METADATA
+    # ========================================================
+
+    if args.attack == "identity":
+
+        ratio_definition = (
+            "Identity evaluation: "
+            "no pixels are removed."
+        )
+
+    else:
+
+        ratio_definition = (
+            "removal_ratio = fraction of image pixels "
+            "removed before reconstruction"
+        )
+
+    results = {
+        "run_name": args.run_name,
+
+        "model_name": model_name,
+
+        "checkpoint_epoch": int(
+            checkpoint["epoch"]
+        ),
+
+        "attack": args.attack,
+
+        "seed": args.seed,
+
+        "num_images": file_count,
+
+        "batch_size": args.batch_size,
+
+        "mask_convention": (
+            "1 = removed/reconstructed, "
+            "0 = retained/known"
+        ),
+
+        "ratio_definition": (
+            ratio_definition
+        ),
+
+        "results": {},
+    }
+
+    # ========================================================
+    # EVALUATION LOOP
+    # ========================================================
+
+    for removal_ratio in removal_ratios:
+
+        removal_ratio = float(
+            removal_ratio
+        )
+
+        print()
+        print("=" * 60)
+
+        if args.attack == "identity":
+
+            print(
+                "IDENTITY / CLEAN EVALUATION"
+            )
+
+        else:
+
+            print(
+                f"{args.attack.upper()} "
+                f"| removal ratio = "
+                f"{removal_ratio:.3f}"
+            )
+
+        print("=" * 60)
+
+        # ====================================================
+        # RESET RANDOM STATES
+        # ====================================================
+        #
+        # EvalInpainting has its own seeded RNG.
+        # Resetting global RNGs additionally protects against
+        # stochastic behaviour in future attack implementations.
+        # ====================================================
+
+        random.seed(
+            args.seed
+        )
+
+        np.random.seed(
+            args.seed
+        )
+
+        torch.manual_seed(
+            args.seed
+        )
+
+        # ====================================================
+        # BUILD EXTERNAL ATTACK
+        # ====================================================
+
+        external_attack = (
+            build_external_attack(
+                name=args.attack,
+                removal_ratio=removal_ratio,
+                seed=args.seed,
+            )
+        )
+
+        # ====================================================
+        # LOAD WATERMARK MODEL
+        #
+        # The original training noiser is deliberately NOT
+        # restored.
+        # ====================================================
+
+        model = (
+            load_model_for_external_eval(
+                hidden_config=hidden_config,
+                checkpoint=checkpoint,
+                device=device,
+                external_noiser=external_attack,
+            )
+        )
+
+        # ====================================================
+        # METRIC METERS
+        # ====================================================
+
+        psnr_meter = (
+            AverageMeter()
+        )
+
+        ssim_meter = (
+            AverageMeter()
+        )
+
+        ber_meter = (
+            AverageMeter()
+        )
+
+        actual_ratio_meter = (
+            AverageMeter()
+        )
+
+        message_offset = 0
+
+        debug_saved = False
+
+        # ====================================================
+        # DATASET EVALUATION
+        # ====================================================
+
+        with torch.no_grad():
+
+            for image, _ in val_data:
+
+                image = image.to(
+                    device=device,
+                    dtype=torch.float32,
                 )
 
-                vutils.save_image(
-                    noised_images[idx],
-                    f"{save_dir}/noised_{float(s):.3f}_{idx}.png"
+                current_batch_size = (
+                    image.shape[0]
                 )
-                # print("original mean:", cover.mean())
-                # print("encoded-layer mean:", encoded_images.mean())
-                # print("noise-layer mean:", noised_images.mean())
-                # print("std:", noised_images.std())
-                # print("min/max:", noised_images.min(), noised_images.max())
-                # print("per-channel mean:", noised_images.mean(dim=(0,2,3)))
 
+                # ============================================
+                # FIXED MESSAGE
+                # ============================================
 
-        results[float(s)] = {
-            "psnr": psnr_meter.avg,
-            "ssim": ssim_meter.avg,
-            "ber": ber_meter.avg
+                message = fixed_messages[
+                    message_offset:
+                    message_offset
+                    + current_batch_size
+                ].to(device)
+
+                message_offset += (
+                    current_batch_size
+                )
+
+                # ============================================
+                # HiDDeN FORWARD / VALIDATION
+                # ============================================
+
+                losses, (
+                    encoded_images,
+                    noised_images,
+                    decoded_messages,
+                ) = model.validate_on_batch(
+                    [
+                        image,
+                        message,
+                    ]
+                )
+
+                # ============================================
+                # CONVERT RANGE
+                #
+                # [-1, 1] -> [0, 1]
+                # ============================================
+
+                cover = convert_img_range(
+                    image
+                )
+
+                encoded = convert_img_range(
+                    encoded_images
+                )
+
+                attacked = convert_img_range(
+                    noised_images
+                )
+
+                cover = torch.clamp(
+                    cover,
+                    0.0,
+                    1.0,
+                )
+
+                encoded = torch.clamp(
+                    encoded,
+                    0.0,
+                    1.0,
+                )
+
+                attacked = torch.clamp(
+                    attacked,
+                    0.0,
+                    1.0,
+                )
+
+                # ============================================
+                # IMAGE QUALITY
+                # ============================================
+                #
+                # For inpainting:
+                #
+                #   cover vs attacked / reconstructed
+                #
+                # For identity:
+                #
+                #   attacked == encoded
+                #
+                # therefore this automatically measures:
+                #
+                #   cover vs encoded
+                #
+                # i.e. embedding quality.
+                # ============================================
+
+                psnr = compute_psnr(
+                    cover,
+                    attacked,
+                )
+
+                ssim = compute_ssim(
+                    cover,
+                    attacked,
+                )
+
+                psnr_meter.update(
+                    psnr.item(),
+                    current_batch_size,
+                )
+
+                ssim_meter.update(
+                    ssim.item(),
+                    current_batch_size,
+                )
+
+                # ============================================
+                # WATERMARK BER
+                # ============================================
+
+                ber_value = to_float(
+                    losses[
+                        "bitwise-error  "
+                    ]
+                )
+
+                ber_meter.update(
+                    ber_value,
+                    current_batch_size,
+                )
+
+                # ============================================
+                # ACTUAL REMOVAL RATIO
+                # ============================================
+                #
+                # Only EvalInpainting exposes last_masks.
+                # Identity has no removal mask.
+                # ============================================
+
+                if (
+                    args.attack != "identity"
+                    and hasattr(
+                        external_attack,
+                        "last_masks",
+                    )
+                    and external_attack.last_masks
+                    is not None
+                ):
+
+                    for removal_mask in (
+                        external_attack.last_masks
+                    ):
+
+                        actual_ratio = float(
+                            removal_mask
+                            .float()
+                            .mean()
+                            .item()
+                        )
+
+                        actual_ratio_meter.update(
+                            actual_ratio
+                        )
+
+                # ============================================
+                # DEBUG OUTPUT
+                #
+                # Save only first image for each ratio.
+                # ============================================
+
+                if (
+                    args.debug
+                    and not debug_saved
+                ):
+
+                    debug_dir = os.path.join(
+                        args.output_dir,
+                        "debug",
+                        (
+                            f"M_{model_name}"
+                            f"_A_{args.attack}"
+                        ),
+                    )
+
+                    os.makedirs(
+                        debug_dir,
+                        exist_ok=True,
+                    )
+
+                    ratio_tag = (
+                        f"{removal_ratio:.3f}"
+                    )
+
+                    # ----------------------------------------
+                    # Cover
+                    # ----------------------------------------
+
+                    vutils.save_image(
+                        cover[0],
+                        os.path.join(
+                            debug_dir,
+                            (
+                                f"cover_"
+                                f"{ratio_tag}.png"
+                            ),
+                        ),
+                    )
+
+                    # ----------------------------------------
+                    # Encoded / watermarked
+                    # ----------------------------------------
+
+                    vutils.save_image(
+                        encoded[0],
+                        os.path.join(
+                            debug_dir,
+                            (
+                                f"encoded_"
+                                f"{ratio_tag}.png"
+                            ),
+                        ),
+                    )
+
+                    # ----------------------------------------
+                    # Attacked
+                    #
+                    # For identity this should equal encoded.
+                    # ----------------------------------------
+
+                    vutils.save_image(
+                        attacked[0],
+                        os.path.join(
+                            debug_dir,
+                            (
+                                f"attacked_"
+                                f"{ratio_tag}.png"
+                            ),
+                        ),
+                    )
+
+                    # ----------------------------------------
+                    # Removal mask
+                    #
+                    # Only available for inpainting attacks.
+                    # ----------------------------------------
+
+                    if (
+                        args.attack != "identity"
+                        and hasattr(
+                            external_attack,
+                            "last_masks",
+                        )
+                        and external_attack.last_masks
+                    ):
+
+                        removal_mask = (
+                            external_attack
+                            .last_masks[0]
+                            .float()
+                            .cpu()
+                        )
+
+                        vutils.save_image(
+                            removal_mask.unsqueeze(0),
+                            os.path.join(
+                                debug_dir,
+                                (
+                                    f"removal_mask_"
+                                    f"{ratio_tag}.png"
+                                ),
+                            ),
+                        )
+
+                        # ----------------------------------------
+                        # Masked image
+                        #
+                        # Visualizes the encoded image after
+                        # removing the pixels specified by the
+                        # removal mask, before reconstruction.
+                        #
+                        # removal_mask = 1 -> removed
+                        # removal_mask = 0 -> retained
+                        # ----------------------------------------
+
+                        encoded_cpu = (
+                            encoded[0]
+                            .detach()
+                            .cpu()
+                        )
+
+                        masked = (
+                            encoded_cpu
+                            * (1.0 - removal_mask.unsqueeze(0))
+                        )
+
+                        vutils.save_image(
+                            masked,
+                            os.path.join(
+                                debug_dir,
+                                (
+                                    f"masked_"
+                                    f"{ratio_tag}.png"
+                                ),
+                            ),
+                        )
+
+                    debug_saved = True
+
+        # ====================================================
+        # DATASET-LEVEL ACTUAL REMOVAL RATIO
+        # ====================================================
+
+        if args.attack == "identity":
+
+            mean_actual_ratio = 0.0
+
+        elif actual_ratio_meter.count > 0:
+
+            mean_actual_ratio = float(
+                actual_ratio_meter.avg
+            )
+
+        else:
+
+            mean_actual_ratio = None
+
+        # ====================================================
+        # SAVE RESULT FOR THIS RATIO
+        # ====================================================
+
+        ratio_key = (
+            f"{removal_ratio:.3f}"
+        )
+
+        results["results"][
+            ratio_key
+        ] = {
+            "target_removal_ratio": (
+                removal_ratio
+            ),
+
+            "actual_removal_ratio": (
+                mean_actual_ratio
+            ),
+
+            "psnr": float(
+                psnr_meter.avg
+            ),
+
+            "ssim": float(
+                ssim_meter.avg
+            ),
+
+            "ber": float(
+                ber_meter.avg
+            ),
         }
 
-        print(f"PSNR={psnr_meter.avg:.4f}, SSIM={ssim_meter.avg:.4f}, BER={ber_meter.avg:.6f}")
+        # ====================================================
+        # PRINT RESULT
+        # ====================================================
 
-    out_file = f"sweep_M_{model_name}_A_{args.attack}_R_{args.min}_{args.max}.json"
+        if args.attack == "identity":
 
-    with open(out_file, "w") as f:
-        json.dump(results, f, indent=4)
+            print(
+                "Target removal ratio: "
+                "0.000000"
+            )
 
-    print(f"\nSaved -> {out_file}")
+            print(
+                "Actual removal ratio: "
+                "0.000000"
+            )
+
+        else:
+
+            print(
+                f"Target removal ratio: "
+                f"{removal_ratio:.6f}"
+            )
+
+            if (
+                mean_actual_ratio
+                is not None
+            ):
+
+                print(
+                    f"Actual removal ratio: "
+                    f"{mean_actual_ratio:.6f}"
+                )
+
+        print(
+            f"PSNR: "
+            f"{psnr_meter.avg:.4f}"
+        )
+
+        print(
+            f"SSIM: "
+            f"{ssim_meter.avg:.4f}"
+        )
+
+        print(
+            f"BER: "
+            f"{ber_meter.avg:.6f}"
+        )
+
+    # ========================================================
+    # OUTPUT FILE NAME
+    # ========================================================
+
+    if args.attack == "identity":
+
+        output_filename = (
+            f"clean_"
+            f"M_{model_name}_"
+            f"S_{args.seed}.json"
+        )
+
+    else:
+
+        output_filename = (
+            f"sweep_"
+            f"M_{model_name}_"
+            f"A_{args.attack}_"
+            f"R_{args.min_ratio:.2f}_"
+            f"{args.max_ratio:.2f}_"
+            f"S_{args.seed}.json"
+        )
+
+    output_file = os.path.join(
+        args.output_dir,
+        output_filename,
+    )
+
+    # ========================================================
+    # SAVE JSON
+    # ========================================================
+
+    with open(
+        output_file,
+        "w",
+        encoding="utf-8",
+    ) as file:
+
+        json.dump(
+            results,
+            file,
+            indent=4,
+            ensure_ascii=False,
+        )
+
+    print()
+    print("=" * 60)
+
+    print(
+        f"Saved -> "
+        f"{output_file}"
+    )
+
+    print("=" * 60)
 
 
 if __name__ == "__main__":
