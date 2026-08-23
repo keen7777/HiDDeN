@@ -27,7 +27,7 @@ from noise_layers.fill_strategies.patchmatch_fill import PatchMatchFill
 from noise_layers.fill_strategies.resnet_fill import ResNetFill
 from noise_layers.fill_strategies.diffusion_fill import DiffusionFill
 from noise_layers.fill_strategies.generator import CorruptionGenerator
-from noise_layers.fixed_cnn_inpainting import FixedCNNInpainting
+from noise_layers.jointly_cnn_inpainting import JointCNNInpainting
 
 # map string -> class
 FILL_MAP = {
@@ -72,7 +72,7 @@ def build_noise_layer(name, s, debug = False):
     )
 
     if name == "learnableinpainting":
-        return FixedCNNInpainting(s,s,32)
+        return JointCNNInpainting(s,s,32)
     
     #   max_mask_ratio=0.5,
         max_mask_number=10,

@@ -233,3 +233,14 @@ python main.py new --name '3k_learn_inpainting_union_mask' --data-dir /home/keen
 python main.py new --name '3k_haar_wavelet' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'haarwavelet(0.4)' --tensorboard 
 # gaussian blur
 python main.py new --name '3k_gaussian_blur' --data-dir /home/keen/HiDDeN/images --batch-size 12 --noise  'gaussianblur(0.5,2.0)' --tensorboard 
+
+# unet
+python main.py new \
+  -d images \
+  -b 12 \
+  -e 2 \
+  --name test_frozen_unet_hidden \
+  --frozen-unet-checkpoint "runs/3k_pretrained_unet 2026.08.22--04-26-56/checkpoints/best.pyt" \
+  --frozen-unet-min-ratio 0.1 \
+  --frozen-unet-max-ratio 0.4 \
+  --frozen-unet-seed 42

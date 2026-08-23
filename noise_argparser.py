@@ -12,7 +12,7 @@ from noise_layers.jpeg_compression import JpegCompression
 # from archive.mask_inpainting_telea import MaskInpaintingTelea
 from noise_layers.haar_wavelet import HaarWavelet
 from noise_layers.gaussian_blur import GaussianBlur
-from noise_layers.fixed_cnn_inpainting import FixedCNNInpainting
+from noise_layers.jointly_cnn_inpainting import JointCNNInpainting
 
 # maybe need to delete resnet and diffusion
 from noise_layers.eval_inpainting import EvalInpainting
@@ -77,7 +77,7 @@ def parse_resize(resize_command):
     max_ratio = float(ratios[1])
     return Resize((min_ratio, max_ratio))
 
-def parse_fixed_cnn_inpainting(command):
+def parse_joint_cnn_inpainting(command):
     """
     Example:
         learnableinpainting(0.1,0.3,32)
@@ -87,20 +87,20 @@ def parse_fixed_cnn_inpainting(command):
         hidden_channels = 32
     """
     matches = re.match(
-        r'learnableinpainting\((\d+\.*\d*),(\d+\.*\d*),(\d+)\)',
+        r'jointcnninpainting\((\d+\.*\d*),(\d+\.*\d*),(\d+)\)',
         command
     )
 
     if matches is None:
         raise ValueError(
-            f'Invalid learnableinpainting command: {command}'
+            f'Invalid jointly trained learnable inpainting command: {command}'
         )
 
     min_ratio = float(matches.group(1))
     max_ratio = float(matches.group(2))
     hidden_channels = int(matches.group(3))
 
-    return FixedCNNInpainting(
+    return JointCNNInpainting(
         min_ratio=min_ratio,
         max_ratio=max_ratio,
         hidden_channels=hidden_channels
@@ -249,8 +249,8 @@ class NoiseArgParser(argparse.Action):
             # Keen: adding own method
             elif command.startswith('evalinpainting'):
                 layers.append(parse_eval_inpainting(command))
-            elif command.startswith('fixedcnninpainting'):
-                layers.append(parse_fixed_cnn_inpainting(command))
+            elif command.startswith('jointcnninpainting'):
+                layers.append(parse_joint_cnn_inpainting(command))
             elif command.startswith('haarwavelet'):
                 layers.append(parse_haar_wavelet(command))
             elif command.startswith('gaussianblur'):

@@ -13,8 +13,8 @@ from model.hidden import Hidden
 from noise_layers.noiser import Noiser
 from noise_argparser import NoiseArgParser
 from train import train
-from train_pretrained_cnn import pretrain_cnn
-from train_pretrained_unet import pretrain_unet
+from learnable_inpainting_scripts.train_pretrained_cnn import pretrain_cnn
+from learnable_inpainting_scripts.train_pretrained_unet import pretrain_unet
 
 def main():
     # device 设置
@@ -183,6 +183,38 @@ def main():
     new_run_parser.add_argument('--enable-fp16', action='store_true', help='Enable mixed-precision training.')
     new_run_parser.add_argument('--noise', nargs='*', action=NoiseArgParser,
                                 help="Noise layers configuration. Use quotes, e.g., 'cropout((0.55,0.6),(0.55,0.6))'")
+    # =========================================================
+    # Frozen pretrained U-Net inpainting
+    # =========================================================
+
+    new_run_parser.add_argument(
+        '--frozen-unet-checkpoint',
+        default=None,
+        type=str,
+        help='Checkpoint of pretrained U-Net used as frozen inpainting corruption.'
+    )
+
+    new_run_parser.add_argument(
+        '--frozen-unet-min-ratio',
+        default=0.1,
+        type=float,
+        help='Minimum masked ratio during HiDDeN training.'
+    )
+
+    new_run_parser.add_argument(
+        '--frozen-unet-max-ratio',
+        default=0.4,
+        type=float,
+        help='Maximum masked ratio during HiDDeN training.'
+    )
+
+    new_run_parser.add_argument(
+        '--frozen-unet-seed',
+        default=42,
+        type=int,
+        help='Random seed of the controlled mask generator.'
+    )
+    #=================Unet End==================================
 
     new_run_parser.set_defaults(tensorboard=False)
     new_run_parser.set_defaults(enable_fp16=False)
@@ -277,6 +309,20 @@ def main():
         )
 
         noise_config = args.noise if args.noise is not None else []
+        # Add frozen pretrained U-Net as a lightweight serialized placeholder.
+        # The actual module will be instantiated by Noiser.
+        if args.frozen_unet_checkpoint is not None:
+            frozen_unet_spec = (
+                f"FrozenUNetPlaceholder|"
+                f"{args.frozen_unet_checkpoint}|"
+                f"{args.frozen_unet_min_ratio}|"
+                f"{args.frozen_unet_max_ratio}|"
+                f"{args.frozen_unet_seed}"
+            )
+
+            noise_config.append(frozen_unet_spec)
+            #====================frozen unet end===============
+            
         hidden_config = HiDDenConfiguration(
             H=args.size, W=args.size,
             message_length=args.message,

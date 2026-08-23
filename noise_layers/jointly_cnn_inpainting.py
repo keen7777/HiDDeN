@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-# fixed CNN Corruption Network
+# jointly trained CNN Corruption Network
 class CorruptionNet(nn.Module):
 
     def __init__(self, hidden_channels=32):
@@ -86,7 +86,7 @@ class CorruptionNet(nn.Module):
         return out
 
 # Learnable Inpainting Layer
-class FixedCNNInpainting(nn.Module):
+class JointCNNInpainting(nn.Module):
 
     """
     Differentiable fixed inpainting corruption layer.

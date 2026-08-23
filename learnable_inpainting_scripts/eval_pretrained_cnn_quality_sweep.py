@@ -12,7 +12,7 @@ from noise_layers.pretrained_cnn_inpainting import (
     RectangleMaskGenerator,
 )
 
-from eval_pretrained_cnn_quality import (
+from learnable_inpainting_scripts.eval_pretrained_cnn_quality import (
     masked_l1_per_image,
     masked_psnr_per_image,
     full_psnr_per_image,
