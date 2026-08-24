@@ -203,7 +203,7 @@ def main():
 
     new_run_parser.add_argument(
         '--frozen-unet-max-ratio',
-        default=0.4,
+        default=0.5,
         type=float,
         help='Maximum masked ratio during HiDDeN training.'
     )

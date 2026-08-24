@@ -244,3 +244,44 @@ python main.py new \
   --frozen-unet-min-ratio 0.1 \
   --frozen-unet-max-ratio 0.4 \
   --frozen-unet-seed 42
+
+### align mask generator:
+#### pretrain
+
+python main.py pretrain-unet \
+  -d images \
+  -b 12 \
+  -e 200 \
+  --name 3k_pretrained_unet_eval_aligned \
+  --size 128 \
+  --lr 1e-4 \
+  --min-ratio 0.1 \
+  --max-ratio 0.5 \
+  --mse-weight 0.5 \
+  --seed 42
+
+#### test hidden:
+python main.py new \
+  -d images \
+  -b 12 \
+  -e 2 \
+  --name test_frozen_unet_eval_aligned \
+  --size 128 \
+  --message 30 \
+  --frozen-unet-checkpoint "./runs/3k_pretrained_unet_eval_aligned 2026.08.24--03-21-57/checkpoints/best.pyt" \
+  --frozen-unet-min-ratio 0.1 \
+  --frozen-unet-max-ratio 0.5 \
+  --frozen-unet-seed 42
+
+##  unet final
+python main.py new \
+  -d images \
+  -b 12 \
+  -e 400 \
+  --name 3k_frozen_pretrained_unet_eval_aligned \
+  --size 128 \
+  --message 30 \
+  --frozen-unet-checkpoint "./runs/3k_pretrained_unet_eval_aligned 2026.08.24--03-21-57/checkpoints/best.pyt" \
+  --frozen-unet-min-ratio 0.1 \
+  --frozen-unet-max-ratio 0.5 \
+  --frozen-unet-seed 42

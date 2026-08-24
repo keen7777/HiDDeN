@@ -98,10 +98,13 @@ class FrozenPretrainedUNetInpainting(nn.Module):
         self,
         checkpoint_path,
         min_ratio=0.1,
-        max_ratio=0.4,
+        max_ratio=0.5,
         base_channels=32,
         min_mask_size=8,
-        max_aspect_ratio=4.0,
+        max_aspect_ratio=3.0,
+        max_rectangles=50,
+        max_rectangle_ratio=0.10,
+        margin=1,
         seed=42,
         randomize_ratio=True,
     ):
@@ -147,19 +150,23 @@ class FrozenPretrainedUNetInpainting(nn.Module):
         self.unet.eval()
 
         # --------------------------------------------------
-        # Controlled exact-coverage mask generator
+        # Eval-aligned rectangle-only mask generator
         # --------------------------------------------------
         self.mask_generator = ControlledRectangleMaskGenerator(
             min_ratio=min_ratio,
             max_ratio=max_ratio,
             min_mask_size=min_mask_size,
             max_aspect_ratio=max_aspect_ratio,
+            max_rectangles=max_rectangles,
+            max_rectangle_ratio=max_rectangle_ratio,
+            margin=margin,
             seed=seed,
             randomize_ratio=randomize_ratio,
         )
 
         # Only for debugging / sanity checks
         self.last_mask = None
+        self.last_removal_ratios = None
 
     def train(self, mode=True):
         """
@@ -184,6 +191,9 @@ class FrozenPretrainedUNetInpainting(nn.Module):
         )
 
         self.last_mask = mask.detach()
+        self.last_removal_ratios = (
+            self.mask_generator.last_removal_ratios
+        )
 
         # --------------------------------------------------
         # CRITICAL:

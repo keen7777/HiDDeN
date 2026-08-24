@@ -2,6 +2,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+from noise_layers.mask_generator import RectangleRemovalMaskGenerator
+
 
 # ============================================================
 # Basic U-Net building block
@@ -250,25 +252,33 @@ class SmallUNet(nn.Module):
 
 
 # ============================================================
-# Controlled rectangular union mask generator
+# Eval-aligned rectangular removal mask generator
 # ============================================================
 
 class ControlledRectangleMaskGenerator:
     """
-    Generate union-of-rectangle masks with controlled coverage.
+    Ratio-sampling wrapper around the EXACT rectangle-mask generator
+    used by evaluation.
 
-    Unlike the old implementation, complete rectangles are not
-    allowed to overshoot the target pixel count.
+    Spatial mask geometry is delegated to
+    RectangleRemovalMaskGenerator from noise_layers.mask_generator.
 
-    The generator keeps adding rectangles whose maximum area is
-    bounded by the number of remaining pixels.
+    Mask convention:
+        1 = removed / missing / reconstructed
+        0 = retained / known
 
-    Result:
-        actual coverage ~= requested target coverage
-
-    mask:
-        1 = missing
-        0 = known
+    Important:
+        - Same rectangle geometry as EvalInpainting.
+        - Same defaults as evaluation:
+              min_mask_size=8
+              max_aspect_ratio=3.0
+              max_rectangles=50
+              max_rectangle_ratio=0.10
+              margin=1
+        - No isolated single-pixel fallback.
+        - Actual removal ratio may be slightly below the requested one.
+        - Removal-ratio RNG and mask-geometry RNG are kept separate,
+          exactly like EvalInpainting.
     """
 
     def __init__(
@@ -276,296 +286,93 @@ class ControlledRectangleMaskGenerator:
         min_ratio=0.1,
         max_ratio=0.5,
         min_mask_size=8,
-        max_aspect_ratio=4.0,
+        max_aspect_ratio=3.0,
+        max_rectangles=50,
+        max_rectangle_ratio=0.10,
+        margin=1,
         seed=42,
         randomize_ratio=True,
     ):
-
         self.min_ratio = min_ratio
         self.max_ratio = max_ratio
-
-        self.min_mask_size = min_mask_size
-        self.max_aspect_ratio = max_aspect_ratio
-
         self.randomize_ratio = randomize_ratio
 
-        self.rng = np.random.RandomState(
-            seed
-        )
-
-    # --------------------------------------------------------
-    # Sample rectangle dimensions
-    # --------------------------------------------------------
-
-    def _sample_rectangle_size(
-        self,
-        max_area,
-        H,
-        W,
-    ):
-
-        if max_area <= 0:
-            return 1, 1
-
-        min_area = (
-            self.min_mask_size ** 2
-        )
-
-        # Near the target, allow the final rectangle
-        # to become smaller than min_mask_size.
-        if max_area <= min_area:
-            area = max_area
-
-        else:
-            area = self.rng.uniform(
-                min_area,
-                max_area,
+        if not 0.0 <= self.min_ratio <= 1.0:
+            raise ValueError(
+                f"min_ratio must be in [0, 1], got {self.min_ratio}"
             )
 
-        aspect_ratio = self.rng.uniform(
-            1.0 / self.max_aspect_ratio,
-            self.max_aspect_ratio,
+        if not 0.0 <= self.max_ratio <= 1.0:
+            raise ValueError(
+                f"max_ratio must be in [0, 1], got {self.max_ratio}"
+            )
+
+        if self.min_ratio > self.max_ratio:
+            raise ValueError(
+                f"min_ratio ({self.min_ratio}) must be <= "
+                f"max_ratio ({self.max_ratio})"
+            )
+
+        # Same design as EvalInpainting:
+        # one RNG samples the severity, another RNG samples geometry.
+        self.ratio_rng = np.random.RandomState(seed)
+
+        mask_seed = (
+            None if seed is None
+            else seed + 1
         )
 
-        w = max(
-            1,
-            int(
-                np.sqrt(
-                    area * aspect_ratio
+        self.rectangle_generator = RectangleRemovalMaskGenerator(
+            min_mask_size=min_mask_size,
+            max_aspect_ratio=max_aspect_ratio,
+            max_rectangles=max_rectangles,
+            max_rectangle_ratio=max_rectangle_ratio,
+            margin=margin,
+            seed=mask_seed,
+        )
+
+        self.last_removal_ratios = None
+
+    def _sample_removal_ratio(self):
+        if self.randomize_ratio:
+            return float(
+                self.ratio_rng.uniform(
+                    self.min_ratio,
+                    self.max_ratio,
                 )
-            ),
+            )
+
+        return float(self.max_ratio)
+
+    def generate_one(
+        self,
+        H,
+        W,
+        removal_ratio,
+    ):
+        """
+        Generate one mask using the exact evaluation geometry.
+        """
+        return self.rectangle_generator.generate_one(
+            H=H,
+            W=W,
+            removal_ratio=removal_ratio,
         )
-
-        h = max(
-            1,
-            int(
-                np.sqrt(
-                    area / aspect_ratio
-                )
-            ),
-        )
-
-        w = min(w, W)
-        h = min(h, H)
-
-        # Integer rounding may occasionally create
-        # an area slightly larger than max_area.
-        while (
-            w * h > max_area
-            and (w > 1 or h > 1)
-        ):
-
-            if w >= h and w > 1:
-                w -= 1
-
-            elif h > 1:
-                h -= 1
-
-            else:
-                break
-
-        return h, w
-
-    # --------------------------------------------------------
-    # Generate one mask
-    # --------------------------------------------------------
 
     def _generate_one(
         self,
         H,
         W,
     ):
+        removal_ratio = self._sample_removal_ratio()
 
-        if self.randomize_ratio:
-
-            target_ratio = self.rng.uniform(
-                self.min_ratio,
-                self.max_ratio,
-            )
-
-        else:
-
-            target_ratio = self.max_ratio
-
-        total_pixels = H * W
-
-        target_pixels = int(
-            round(
-                target_ratio
-                * total_pixels
-            )
+        mask = self.generate_one(
+            H=H,
+            W=W,
+            removal_ratio=removal_ratio,
         )
 
-        target_pixels = max(
-            1,
-            min(
-                target_pixels,
-                total_pixels,
-            ),
-        )
-
-        mask = np.zeros(
-            (H, W),
-            dtype=np.float32,
-        )
-
-        current_pixels = 0
-
-        max_iterations = 2000
-
-        iterations = 0
-
-        while (
-            current_pixels < target_pixels
-            and iterations < max_iterations
-        ):
-
-            iterations += 1
-
-            remaining = (
-                target_pixels
-                - current_pixels
-            )
-
-            # Keep the old experiment's basic idea:
-            # one candidate rectangle should not dominate
-            # more than 10% of the full image.
-            max_rectangle_area = min(
-                int(
-                    total_pixels * 0.1
-                ),
-                remaining,
-            )
-
-            max_rectangle_area = max(
-                1,
-                max_rectangle_area,
-            )
-
-            h, w = (
-                self._sample_rectangle_size(
-                    max_rectangle_area,
-                    H,
-                    W,
-                )
-            )
-
-            # ------------------------------------------------
-            # Try several positions and choose the position
-            # adding the most NEW pixels.
-            #
-            # This reduces excessive overlap.
-            # ------------------------------------------------
-
-            best_top = None
-            best_left = None
-            best_new_pixels = -1
-
-            trials = 20
-
-            for _ in range(trials):
-
-                if H == h:
-                    top = 0
-                else:
-                    top = self.rng.randint(
-                        0,
-                        H - h + 1,
-                    )
-
-                if W == w:
-                    left = 0
-                else:
-                    left = self.rng.randint(
-                        0,
-                        W - w + 1,
-                    )
-
-                region = mask[
-                    top:top + h,
-                    left:left + w
-                ]
-
-                new_pixels = int(
-                    np.sum(
-                        region == 0
-                    )
-                )
-
-                if (
-                    new_pixels
-                    > best_new_pixels
-                ):
-
-                    best_new_pixels = (
-                        new_pixels
-                    )
-
-                    best_top = top
-                    best_left = left
-
-            if (
-                best_top is None
-                or best_new_pixels <= 0
-            ):
-                continue
-
-            # ------------------------------------------------
-            # Since rectangle area <= remaining,
-            # this cannot overshoot target_pixels.
-            # ------------------------------------------------
-
-            mask[
-                best_top:best_top + h,
-                best_left:best_left + w
-            ] = 1.0
-
-            current_pixels = int(
-                mask.sum()
-            )
-
-        # ----------------------------------------------------
-        # Safety fallback:
-        #
-        # If highly overlapping rectangles prevent exact
-        # coverage, fill remaining pixels individually.
-        #
-        # This should normally affect only a tiny number
-        # of final pixels.
-        # ----------------------------------------------------
-
-        remaining = (
-            target_pixels
-            - int(mask.sum())
-        )
-
-        if remaining > 0:
-
-            empty = np.argwhere(
-                mask == 0
-            )
-
-            chosen = self.rng.choice(
-                len(empty),
-                size=min(
-                    remaining,
-                    len(empty),
-                ),
-                replace=False,
-            )
-
-            coords = empty[chosen]
-
-            mask[
-                coords[:, 0],
-                coords[:, 1]
-            ] = 1.0
-
-        return mask
-
-    # --------------------------------------------------------
-    # Batch API
-    # --------------------------------------------------------
+        return mask, removal_ratio
 
     def generate(
         self,
@@ -574,27 +381,36 @@ class ControlledRectangleMaskGenerator:
         W,
         device,
     ):
+        """
+        Batch API kept compatible with the existing pretraining and
+        FrozenPretrainedUNetInpainting code.
 
+        Returns:
+            [B, 1, H, W] float tensor
+        """
         masks = []
+        removal_ratios = []
 
         for _ in range(B):
-
-            masks.append(
-                self._generate_one(
-                    H,
-                    W,
-                )
+            mask, removal_ratio = self._generate_one(
+                H=H,
+                W=W,
             )
 
-        mask = np.stack(
+            masks.append(mask)
+            removal_ratios.append(removal_ratio)
+
+        masks = np.stack(
             masks,
             axis=0,
         )
 
-        mask = torch.tensor(
-            mask,
+        masks = torch.tensor(
+            masks,
             dtype=torch.float32,
             device=device,
         )
 
-        return mask.unsqueeze(1)
+        self.last_removal_ratios = removal_ratios
+
+        return masks.unsqueeze(1)

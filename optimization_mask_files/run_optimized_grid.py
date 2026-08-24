@@ -33,7 +33,7 @@ MODELS = [
     "3k_baseline 2026.05.13--12-17-40",
     "3k_gaussian_blur 2026.05.26--18-42-22",
     "3k_haar_wavelet 2026.05.26--12-12-55",
-    "3k_frozen_pretrained_unet 2026.08.22--12-55-32",
+    "3k_frozen_pretrained_unet_eval_aligned 2026.08.24--04-07-29",
 ]
 
 
@@ -99,9 +99,6 @@ ATTACKS = [
     "diffusion",
 ]
 """
-ATTACKS = [
-    "diffusion",
-]
 
 ATTACKS = [
     "diffusion",

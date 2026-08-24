@@ -1,0 +1,20 @@
+{
+    "mask_type": "random_sparse",
+    "mask_count": 300,
+    "mask_shape": [
+        300,
+        128,
+        128
+    ],
+    "image_size": 128,
+    "seed": 42,
+    "target_retained_density": 0.1,
+    "target_removal_ratio": 0.9,
+    "mean_retained_density": 0.0999755859375,
+    "mean_removal_ratio": 0.9000244140625,
+    "stored_mask_convention": "1 = retained/known, 0 = removed/reconstructed",
+    "image_directory": "/home/keen/HiDDeN/images/val/val_class",
+    "output_directory": "/home/keen/HiDDeN/sparse_random_masks_data/random_masks_den_0.1_seed_42",
+    "visualizations_saved": true,
+    "visualization_limit": 10
+}

@@ -25,6 +25,7 @@ from noise_layers.fill_strategies.mean_fill import MeanFill
 from noise_layers.fill_strategies.telea_fill import TeleaFill
 from noise_layers.fill_strategies.navier_stokes_fill import NavierStokesFill
 from noise_layers.fill_strategies.shiftmap_fill import ShiftMapFill
+from noise_layers.fill_strategies.diffusion_fill import DiffusionFill
 
 
 # ============================================================
@@ -50,6 +51,7 @@ FILL_MAP = {
     "telea": TeleaFill,
     "navier": NavierStokesFill,
     "shiftmap": ShiftMapFill,
+    "diffusion": DiffusionFill,
 }
 
 
@@ -59,6 +61,7 @@ AVAILABLE_ATTACKS = [
     "telea",
     "navier",
     "shiftmap",
+    "diffusion"
 ]
 
 
