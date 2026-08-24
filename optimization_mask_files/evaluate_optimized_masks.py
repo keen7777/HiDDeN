@@ -4,7 +4,6 @@ import argparse
 import json
 from pathlib import Path
 
-# Add the HiDDeN project root to Python's import path.
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -18,7 +17,11 @@ from model.hidden import Hidden
 from average_meter import AverageMeter
 from evaluation.rgb_yuv_convert import convert_img_range
 from evaluation.psnr_ssim_evaluation import compute_psnr, compute_ssim
-from mask_optimization import inpaint_hom_diff
+
+from noise_layers.fill_strategies.mean_fill import MeanFill
+from noise_layers.fill_strategies.telea_fill import TeleaFill
+from noise_layers.fill_strategies.navier_stokes_fill import NavierStokesFill
+from noise_layers.fill_strategies.diffusion_fill import DiffusionFill
 
 
 DEFAULT_MASK_FILE = (
@@ -27,24 +30,43 @@ DEFAULT_MASK_FILE = (
     "val_ps_nlpe_masks_density_100.npy"
 )
 
+FILL_MAP = {
+    "mean": MeanFill,
+    "telea": TeleaFill,
+    "navier": NavierStokesFill,
+    "diffusion": DiffusionFill,
+}
 
-class PrecomputedDiffusionInpainting(nn.Module):
+
+def build_fill_strategy(name, tau=0.25, diffusion_iterations=150):
+    if name not in FILL_MAP:
+        raise ValueError(
+            f"Unknown attack '{name}'. Available attacks: {list(FILL_MAP.keys())}"
+        )
+
+    if name == "diffusion":
+        return DiffusionFill(
+            tau=tau,
+            num_iterations=diffusion_iterations,
+        )
+
+    return FILL_MAP[name]()
+
+
+class PrecomputedOptimizedMaskInpainting(nn.Module):
     """
-    HiDDeN-compatible noise layer using precomputed optimized masks.
+    Apply one fill strategy using precomputed optimized sparse masks.
 
-    Mask convention:
-        True  = known / retained pixel
-        False = missing / inpainted pixel
+    Stored .npy mask convention:
+        1 / True  = retained / known
+        0 / False = removed / reconstructed
 
-    The masks are consumed in validation-dataset order.
+    Fill-strategy convention:
+        1 = removed / reconstructed
+        0 = retained / known
     """
 
-    def __init__(
-        self,
-        mask_file,
-        tau=0.25,
-        diffusion_iterations=150,
-    ):
+    def __init__(self, mask_file, fill_strategy):
         super().__init__()
 
         self.mask_file = mask_file
@@ -57,122 +79,186 @@ class PrecomputedDiffusionInpainting(nn.Module):
             )
 
         self.masks = self.masks.astype(np.bool_, copy=False)
-        self.tau = tau
-        self.diffusion_iterations = diffusion_iterations
+        self.fill_strategy = fill_strategy
         self.next_mask_index = 0
+        self.last_masks = None
 
     def reset(self):
         self.next_mask_index = 0
+        self.last_masks = None
 
-    def current_batch_indices(self, batch_size):
+    def get_mask_batch(self, batch_size):
         start = self.next_mask_index
         end = start + batch_size
+
         if end > len(self.masks):
             raise IndexError(
                 "Not enough precomputed masks. "
-                f"Requested masks [{start}:{end}], "
-                f"but only {len(self.masks)} masks are available."
+                f"Requested [{start}:{end}], but only {len(self.masks)} exist."
             )
-        return start, end
 
-    def get_mask_batch(self, batch_size):
-        start, end = self.current_batch_indices(batch_size)
         return self.masks[start:end], start, end
 
     def forward(self, encoded_and_cover):
         if not isinstance(encoded_and_cover, (list, tuple)):
-            raise TypeError(
-                "Expected [encoded_images, cover_images] as input."
-            )
+            raise TypeError("Expected [encoded_images, cover_images].")
 
         if len(encoded_and_cover) != 2:
-            raise ValueError(
-                "Expected exactly two inputs: "
-                "[encoded_images, cover_images]."
-            )
+            raise ValueError("Expected exactly [encoded_images, cover_images].")
 
         encoded_images, cover_images = encoded_and_cover
         batch_size = encoded_images.size(0)
-        batch_masks, start, end = self.get_mask_batch(batch_size)
+        batch_masks, _, end = self.get_mask_batch(batch_size)
 
-        noised_images = []
+        attacked_images = []
+        used_removal_masks = []
 
-        # HiDDeN tensors are normally in [-1, 1].
-        # Convert each encoded image to [0, 1] before NumPy diffusion,
-        # then convert the reconstruction back to [-1, 1].
         for batch_index in range(batch_size):
-            encoded = encoded_images[batch_index]
+            retention_np = batch_masks[batch_index]
 
-            image_01 = ((encoded.detach().cpu() + 1.0) / 2.0)
-            image_01 = torch.clamp(image_01, 0.0, 1.0)
-
-            image_np = (
-                image_01
-                .permute(1, 2, 0)
-                .numpy()
-                .astype(np.float64, copy=False)
-            )
-
-            mask = batch_masks[batch_index]
-
-            if mask.shape != image_np.shape[:2]:
+            if retention_np.shape != tuple(encoded_images.shape[-2:]):
                 raise ValueError(
                     "Mask/image shape mismatch: "
-                    f"mask={mask.shape}, image={image_np.shape[:2]}"
+                    f"mask={retention_np.shape}, "
+                    f"image={tuple(encoded_images.shape[-2:])}"
                 )
 
-            reconstructed = inpaint_hom_diff(
-                known_image_data=image_np,
-                mask=mask,
-                num_iterations=self.diffusion_iterations,
-                tau=self.tau,
-            )
+            # IMPORTANT: optimized masks store 1=retained,
+            # while every FillStrategy expects 1=removed.
+            removal_np = ~retention_np
 
-            reconstructed = np.clip(
-                reconstructed,
-                0.0,
-                1.0,
-            ).astype(np.float32)
-
-            reconstructed_tensor = torch.from_numpy(
-                reconstructed
-            ).permute(2, 0, 1)
-
-            reconstructed_tensor = (
-                reconstructed_tensor * 2.0 - 1.0
+            removal_mask = torch.from_numpy(
+                removal_np.astype(np.float32)
             ).to(
                 device=encoded_images.device,
                 dtype=encoded_images.dtype,
             )
 
-            noised_images.append(reconstructed_tensor)
+            encoded_single = encoded_images[
+                batch_index : batch_index + 1
+            ]
+
+            reconstructed = self.fill_strategy.fill(
+                encoded_single,
+                removal_mask,
+            )
+
+            if reconstructed.shape != encoded_single.shape:
+                raise ValueError(
+                    "Fill strategy returned unexpected shape: "
+                    f"{tuple(reconstructed.shape)}, "
+                    f"expected {tuple(encoded_single.shape)}"
+                )
+
+            # Enforce strict inpainting at wrapper level.
+            # Known/retained pixels remain exactly unchanged.
+            mask_4d = removal_mask.unsqueeze(0).unsqueeze(0)
+            attacked = (
+                encoded_single * (1.0 - mask_4d)
+                + reconstructed * mask_4d
+            )
+
+            attacked_images.append(attacked)
+            used_removal_masks.append(removal_mask.detach().cpu())
 
         self.next_mask_index = end
-        noised_images = torch.stack(noised_images, dim=0)
-        return [noised_images, cover_images]
+        self.last_masks = used_removal_masks
+
+        return [torch.cat(attacked_images, dim=0), cover_images]
+
+
+def load_model_for_external_eval(
+    hidden_config,
+    checkpoint,
+    device,
+    external_noiser,
+):
+    """Load trained encoder/decoder while replacing the training noiser."""
+
+    model = Hidden(
+        hidden_config,
+        device,
+        external_noiser,
+        tb_logger=None,
+    )
+
+    checkpoint_state = checkpoint["enc-dec-model"]
+
+    filtered_state = {
+        key: value
+        for key, value in checkpoint_state.items()
+        if not key.startswith("noiser.")
+    }
+
+    load_result = model.encoder_decoder.load_state_dict(
+        filtered_state,
+        strict=False,
+    )
+
+    bad_missing = [
+        key
+        for key in load_result.missing_keys
+        if not key.startswith("noiser.")
+    ]
+
+    bad_unexpected = [
+        key
+        for key in load_result.unexpected_keys
+        if not key.startswith("noiser.")
+    ]
+
+    if bad_missing or bad_unexpected:
+        raise RuntimeError(
+            "Unexpected checkpoint mismatch.\n"
+            f"Missing keys: {bad_missing}\n"
+            f"Unexpected keys: {bad_unexpected}"
+        )
+
+    if "discrim-model" in checkpoint:
+        model.discriminator.load_state_dict(checkpoint["discrim-model"])
+
+    model.encoder_decoder.eval()
+    if hasattr(model, "discriminator"):
+        model.discriminator.eval()
+
+    return model
+
+
+def to_float(value):
+    if torch.is_tensor(value):
+        return value.detach().cpu().item()
+    return float(value)
 
 
 def save_mask_visual(mask_bool, output_path):
-    mask_uint8 = (mask_bool.astype(np.uint8) * 255)
+    mask_uint8 = mask_bool.astype(np.uint8) * 255
     mask_tensor = torch.from_numpy(mask_uint8).float().unsqueeze(0) / 255.0
     vutils.save_image(mask_tensor, output_path)
 
 
-
 def main():
+    # Keep CPU for direct comparability with the current external sweep.
     device = torch.device("cpu")
 
     parser = argparse.ArgumentParser(
         description=(
-            "Evaluate HiDDeN using precomputed optimized PS+NLPE masks "
-            "and save results into a dedicated output folder."
+            "Evaluate HiDDeN using precomputed optimized sparse masks "
+            "with Mean, Telea, Navier-Stokes, or homogeneous diffusion."
         )
     )
 
     parser.add_argument("-d", "--data-dir", required=True)
-    parser.add_argument("-r", "--runs_root", default="./runs")
+    parser.add_argument(
+        "-r", "--runs-root", "--runs_root",
+        dest="runs_root", default="./runs"
+    )
     parser.add_argument("--run-name", required=True)
     parser.add_argument("--mask-file", default=DEFAULT_MASK_FILE)
+    parser.add_argument(
+        "--attack",
+        required=True,
+        choices=list(FILL_MAP.keys()),
+    )
     parser.add_argument("--tau", type=float, default=0.25)
     parser.add_argument("--diffusion-iterations", type=int, default=150)
     parser.add_argument("--batch-size", type=int, default=1)
@@ -180,31 +266,25 @@ def main():
     parser.add_argument(
         "--output-root",
         default="./optimized_mask_eval_outputs",
-        help="Root directory where a dedicated output folder will be created.",
     )
-    parser.add_argument(
-        "--save-images",
-        action="store_true",
-        help="Save attacked-image visualizations.",
-    )
+    parser.add_argument("--save-images", action="store_true")
     parser.add_argument(
         "--save-image-limit",
         type=int,
         default=10,
-        help="How many validation samples to visualize. Use -1 for all.",
+        help="Number of samples to save; -1 saves all.",
     )
-    parser.add_argument(
-        "--save-mask-visuals",
-        action="store_true",
-        help="Also save the corresponding mask PNG visualizations.",
-    )
+    parser.add_argument("--save-mask-visuals", action="store_true")
 
     args = parser.parse_args()
 
+    # ---------------------------------------------------------
+    # Load run config and checkpoint
+    # ---------------------------------------------------------
     run_path = os.path.join(args.runs_root, args.run_name)
     options_file = os.path.join(run_path, "options-and-config.pickle")
-    train_options, hidden_config, _ = utils.load_options(options_file)
 
+    train_options, hidden_config, _ = utils.load_options(options_file)
     train_options.validation_folder = os.path.join(args.data_dir, "val")
     train_options.batch_size = args.batch_size
 
@@ -212,6 +292,9 @@ def main():
         os.path.join(run_path, "checkpoints")
     )
 
+    # ---------------------------------------------------------
+    # Load optimized masks
+    # ---------------------------------------------------------
     masks = np.load(args.mask_file, mmap_mode="r")
     if masks.ndim != 3:
         raise ValueError(
@@ -219,11 +302,30 @@ def main():
             f"got {masks.shape}"
         )
 
+    mean_retained_density = float(masks.mean())
+    mean_removal_ratio = float(1.0 - mean_retained_density)
+
+    # ---------------------------------------------------------
+    # Output paths
+    # ---------------------------------------------------------
     model_name = args.run_name.split(" ")[0]
-    mask_stem = os.path.splitext(os.path.basename(args.mask_file))[0]
+    mask_stem = os.path.splitext(
+        os.path.basename(args.mask_file)
+    )[0]
+
+    mask_set_name = os.path.basename(
+        os.path.dirname(args.mask_file)
+    )
+
     output_dir = os.path.join(
         args.output_root,
-        f"M_{model_name}__{mask_stem}__diff_{args.diffusion_iterations}__seed_{args.message_seed}",
+        (
+            f"M_{model_name}"
+            f"__A_{args.attack}"
+            f"__{mask_set_name}"
+            f"__{mask_stem}"
+            f"__seed_{args.message_seed}"
+        ),
     )
     os.makedirs(output_dir, exist_ok=True)
 
@@ -231,12 +333,14 @@ def main():
     attacked_dir = os.path.join(images_dir, "attacked")
     cover_dir = os.path.join(images_dir, "cover")
     encoded_dir = os.path.join(images_dir, "encoded")
+    masked_dir = os.path.join(images_dir, "masked")
     mask_vis_dir = os.path.join(images_dir, "masks")
 
     if args.save_images:
         os.makedirs(attacked_dir, exist_ok=True)
         os.makedirs(cover_dir, exist_ok=True)
         os.makedirs(encoded_dir, exist_ok=True)
+        os.makedirs(masked_dir, exist_ok=True)
         if args.save_mask_visuals:
             os.makedirs(mask_vis_dir, exist_ok=True)
 
@@ -244,153 +348,266 @@ def main():
     per_image_path = os.path.join(output_dir, "per_image_metrics.json")
     run_config_path = os.path.join(output_dir, "run_config.json")
 
-    print("====================================")
-    print("OPTIMIZED MASK EVALUATION")
-    print("------------------------------------")
-    print(f"Run: {args.run_name}")
-    print(f"Checkpoint: {checkpoint_name}")
-    print(f"Mask file: {args.mask_file}")
-    print(f"Mask shape: {masks.shape}")
-    print(f"Mean retained density: {float(masks.mean()):.6f}")
-    print(f"Diffusion iterations: {args.diffusion_iterations}")
-    print(f"Tau: {args.tau}")
-    print(f"Batch size: {args.batch_size}")
-    print(f"Output directory: {output_dir}")
-    print("====================================")
-
-    noiser = PrecomputedDiffusionInpainting(
-        mask_file=args.mask_file,
+    # ---------------------------------------------------------
+    # Build external attack and load model safely
+    # ---------------------------------------------------------
+    fill_strategy = build_fill_strategy(
+        name=args.attack,
         tau=args.tau,
         diffusion_iterations=args.diffusion_iterations,
     )
 
-    model = Hidden(hidden_config, device, noiser, tb_logger=None)
-    utils.model_from_checkpoint(model, checkpoint)
+    external_attack = PrecomputedOptimizedMaskInpainting(
+        mask_file=args.mask_file,
+        fill_strategy=fill_strategy,
+    )
 
+    model = load_model_for_external_eval(
+        hidden_config=hidden_config,
+        checkpoint=checkpoint,
+        device=device,
+        external_noiser=external_attack,
+    )
+
+    # ---------------------------------------------------------
+    # Validation data + fixed messages
+    # ---------------------------------------------------------
     _, val_data = utils.get_data_loaders(hidden_config, train_options)
     dataset_size = len(val_data.dataset)
 
     if len(masks) != dataset_size:
         raise ValueError(
-            "Number of precomputed masks does not match "
-            "validation dataset size: "
+            "Number of precomputed masks does not match validation dataset: "
             f"masks={len(masks)}, dataset={dataset_size}"
         )
-
-    psnr_meter = AverageMeter()
-    ssim_meter = AverageMeter()
-    ber_meter = AverageMeter()
 
     message_generator = torch.Generator(device="cpu")
     message_generator.manual_seed(args.message_seed)
 
-    noiser.reset()
+    fixed_messages = torch.randint(
+        low=0,
+        high=2,
+        size=(dataset_size, hidden_config.message_length),
+        generator=message_generator,
+        dtype=torch.float32,
+    )
+
+    print("=" * 60)
+    print("OPTIMIZED SPARSE MASK EVALUATION")
+    print("=" * 60)
+    print(f"Run: {args.run_name}")
+    print(f"Checkpoint: {checkpoint_name}")
+    print(f"Checkpoint epoch: {checkpoint['epoch']}")
+    print(f"Attack: {args.attack}")
+    print(f"Mask file: {args.mask_file}")
+    print(f"Mask shape: {masks.shape}")
+    print(f"Mean retained density: {mean_retained_density:.6f}")
+    print(f"Mean removal ratio: {mean_removal_ratio:.6f}")
+    if args.attack == "diffusion":
+        print(f"Diffusion iterations: {args.diffusion_iterations}")
+        print(f"Tau: {args.tau}")
+    print(f"Message seed: {args.message_seed}")
+    print(f"Batch size: {args.batch_size}")
+    print(f"Device: {device}")
+    print(f"Output directory: {output_dir}")
+    print("=" * 60)
+
+    # ---------------------------------------------------------
+    # Evaluation
+    # ---------------------------------------------------------
+    psnr_meter = AverageMeter()
+    ssim_meter = AverageMeter()
+    ber_meter = AverageMeter()
+    actual_removal_meter = AverageMeter()
+
+    external_attack.reset()
     processed_images = 0
+    message_offset = 0
     per_image_records = []
     saved_visualizations = 0
 
-    for batch_index, (image, _) in enumerate(val_data):
-        image = image.to(device)
-        batch_size = image.size(0)
+    with torch.no_grad():
+        for image, _ in val_data:
+            image = image.to(device=device, dtype=torch.float32)
+            current_batch_size = image.size(0)
 
-        batch_mask_start = noiser.next_mask_index
-        batch_masks = noiser.masks[
-            batch_mask_start : batch_mask_start + batch_size
-        ]
+            batch_mask_start = external_attack.next_mask_index
+            batch_retention_masks = external_attack.masks[
+                batch_mask_start : batch_mask_start + current_batch_size
+            ]
 
-        message = torch.randint(
-            0,
-            2,
-            (image.size(0), hidden_config.message_length),
-            generator=message_generator,
-        ).float().to(device)
+            message = fixed_messages[
+                message_offset : message_offset + current_batch_size
+            ].to(device)
+            message_offset += current_batch_size
 
-        losses, (encoded_images, noised_images, decoded) = model.validate_on_batch(
-            [image, message]
-        )
+            losses, (
+                encoded_images,
+                noised_images,
+                decoded_messages,
+            ) = model.validate_on_batch([image, message])
 
-        cover = torch.clamp(convert_img_range(image), 0, 1)
-        encoded_01 = torch.clamp(convert_img_range(encoded_images), 0, 1)
-        noised_01 = torch.clamp(convert_img_range(noised_images), 0, 1)
-
-        batch_psnr = compute_psnr(cover, noised_01).item()
-        batch_ssim = compute_ssim(cover, noised_01).item()
-
-        psnr_meter.update(batch_psnr, batch_size)
-        ssim_meter.update(batch_ssim, batch_size)
-        ber_meter.update(losses["bitwise-error  "], batch_size)
-
-        for local_idx in range(batch_size):
-            global_idx = processed_images + local_idx
-
-            single_cover = cover[local_idx : local_idx + 1]
-            single_noised = noised_01[local_idx : local_idx + 1]
-            single_psnr = compute_psnr(single_cover, single_noised).item()
-            single_ssim = compute_ssim(single_cover, single_noised).item()
-
-            per_image_records.append(
-                {
-                    "index": int(global_idx),
-                    "psnr": float(single_psnr),
-                    "ssim": float(single_ssim),
-                    "ber_batch_value": float(losses["bitwise-error  "]),
-                }
+            cover = torch.clamp(convert_img_range(image), 0.0, 1.0)
+            encoded = torch.clamp(
+                convert_img_range(encoded_images), 0.0, 1.0
+            )
+            attacked = torch.clamp(
+                convert_img_range(noised_images), 0.0, 1.0
             )
 
-            if args.save_images:
-                save_all = args.save_image_limit == -1
-                if save_all or saved_visualizations < args.save_image_limit:
-                    prefix = f"{global_idx:04d}"
-                    vutils.save_image(
-                        single_cover[0],
-                        os.path.join(cover_dir, f"{prefix}_cover.png"),
+            batch_psnr = compute_psnr(cover, attacked).item()
+            batch_ssim = compute_ssim(cover, attacked).item()
+            ber_value = to_float(losses["bitwise-error  "])
+
+            psnr_meter.update(batch_psnr, current_batch_size)
+            ssim_meter.update(batch_ssim, current_batch_size)
+            ber_meter.update(ber_value, current_batch_size)
+
+            if external_attack.last_masks is not None:
+                for removal_mask in external_attack.last_masks:
+                    actual_removal_meter.update(
+                        float(removal_mask.float().mean().item())
                     )
-                    vutils.save_image(
-                        encoded_01[local_idx],
-                        os.path.join(encoded_dir, f"{prefix}_encoded.png"),
-                    )
-                    vutils.save_image(
-                        single_noised[0],
-                        os.path.join(attacked_dir, f"{prefix}_attacked.png"),
-                    )
-                    if args.save_mask_visuals:
-                        save_mask_visual(
-                            batch_masks[local_idx],
-                            os.path.join(mask_vis_dir, f"{prefix}_mask.png"),
+
+            for local_idx in range(current_batch_size):
+                global_idx = processed_images + local_idx
+
+                single_cover = cover[local_idx : local_idx + 1]
+                single_attacked = attacked[local_idx : local_idx + 1]
+
+                single_psnr = compute_psnr(
+                    single_cover, single_attacked
+                ).item()
+                single_ssim = compute_ssim(
+                    single_cover, single_attacked
+                ).item()
+
+                retained_density = float(
+                    batch_retention_masks[local_idx].mean()
+                )
+
+                per_image_records.append(
+                    {
+                        "index": int(global_idx),
+                        "retained_density": retained_density,
+                        "removal_ratio": 1.0 - retained_density,
+                        "psnr": float(single_psnr),
+                        "ssim": float(single_ssim),
+                        # Exact per-image BER when batch_size=1.
+                        "ber_batch_value": float(ber_value),
+                    }
+                )
+
+                if args.save_images:
+                    save_all = args.save_image_limit == -1
+                    if save_all or saved_visualizations < args.save_image_limit:
+                        prefix = f"{global_idx:04d}"
+
+                        vutils.save_image(
+                            single_cover[0],
+                            os.path.join(cover_dir, f"{prefix}_cover.png"),
                         )
-                    saved_visualizations += 1
+                        vutils.save_image(
+                            encoded[local_idx],
+                            os.path.join(encoded_dir, f"{prefix}_encoded.png"),
+                        )
+                        vutils.save_image(
+                            single_attacked[0],
+                            os.path.join(attacked_dir, f"{prefix}_attacked.png"),
+                        )
 
-        processed_images += batch_size
+                        retention_tensor = torch.from_numpy(
+                            batch_retention_masks[local_idx].astype(np.float32)
+                        ).unsqueeze(0)
 
-        if processed_images % 50 == 0 or processed_images == dataset_size:
-            print(f"Processed {processed_images}/{dataset_size}")
+                        masked = encoded[local_idx].cpu() * retention_tensor
+                        vutils.save_image(
+                            masked,
+                            os.path.join(masked_dir, f"{prefix}_masked.png"),
+                        )
 
-    if noiser.next_mask_index != dataset_size:
+                        if args.save_mask_visuals:
+                            retention_np = batch_retention_masks[local_idx]
+                            removal_np = ~retention_np
+
+                            save_mask_visual(
+                                retention_np,
+                                os.path.join(
+                                    mask_vis_dir,
+                                    f"{prefix}_retention_mask.png",
+                                ),
+                            )
+                            save_mask_visual(
+                                removal_np,
+                                os.path.join(
+                                    mask_vis_dir,
+                                    f"{prefix}_removal_mask.png",
+                                ),
+                            )
+
+                        saved_visualizations += 1
+
+            processed_images += current_batch_size
+
+            if processed_images % 50 == 0 or processed_images == dataset_size:
+                print(f"Processed {processed_images}/{dataset_size}")
+
+    # ---------------------------------------------------------
+    # Sanity checks + result files
+    # ---------------------------------------------------------
+    if external_attack.next_mask_index != dataset_size:
         raise RuntimeError(
             "Mask consumption count does not match dataset size: "
-            f"used={noiser.next_mask_index}, dataset={dataset_size}"
+            f"used={external_attack.next_mask_index}, dataset={dataset_size}"
         )
+
+    if message_offset != dataset_size:
+        raise RuntimeError(
+            "Message consumption count does not match dataset size: "
+            f"used={message_offset}, dataset={dataset_size}"
+        )
+
+    measured_removal_ratio = (
+        float(actual_removal_meter.avg)
+        if actual_removal_meter.count > 0
+        else None
+    )
 
     result = {
         "run_name": args.run_name,
+        "model_name": model_name,
         "checkpoint": str(checkpoint_name),
+        "checkpoint_epoch": int(checkpoint["epoch"]),
+        "attack": args.attack,
+        "mask_type": "optimized_sparse_ps_nlpe",
         "mask_file": args.mask_file,
         "mask_count": int(len(masks)),
         "mask_shape": list(masks.shape),
-        "mean_retained_density": float(masks.mean()),
-        "tau": args.tau,
-        "diffusion_iterations": args.diffusion_iterations,
+        "stored_mask_convention": (
+            "1 = retained/known, 0 = removed/reconstructed"
+        ),
+        "fill_mask_convention": (
+            "1 = removed/reconstructed, 0 = retained/known"
+        ),
+        "mean_retained_density": mean_retained_density,
+        "mean_removal_ratio": mean_removal_ratio,
+        "measured_removal_ratio": measured_removal_ratio,
+        "tau": args.tau if args.attack == "diffusion" else None,
+        "diffusion_iterations": (
+            args.diffusion_iterations if args.attack == "diffusion" else None
+        ),
         "message_seed": args.message_seed,
         "batch_size": args.batch_size,
         "processed_images": processed_images,
-        "psnr": psnr_meter.avg,
-        "ssim": ssim_meter.avg,
-        "ber": ber_meter.avg,
+        "psnr": float(psnr_meter.avg),
+        "ssim": float(ssim_meter.avg),
+        "ber": float(ber_meter.avg),
         "saved_visualizations": int(saved_visualizations),
         "output_dir": output_dir,
         "files": {
             "summary_json": summary_path,
             "per_image_metrics_json": per_image_path,
+            "run_config_json": run_config_path,
         },
     }
 
@@ -399,6 +616,7 @@ def main():
         "runs_root": args.runs_root,
         "run_name": args.run_name,
         "mask_file": args.mask_file,
+        "attack": args.attack,
         "tau": args.tau,
         "diffusion_iterations": args.diffusion_iterations,
         "batch_size": args.batch_size,
@@ -410,27 +628,28 @@ def main():
     }
 
     with open(summary_path, "w", encoding="utf-8") as file:
-        json.dump(result, file, indent=4)
+        json.dump(result, file, indent=4, ensure_ascii=False)
 
     with open(per_image_path, "w", encoding="utf-8") as file:
-        json.dump(per_image_records, file, indent=4)
+        json.dump(per_image_records, file, indent=4, ensure_ascii=False)
 
     with open(run_config_path, "w", encoding="utf-8") as file:
-        json.dump(run_config, file, indent=4)
+        json.dump(run_config, file, indent=4, ensure_ascii=False)
 
-    print("\n====================================")
+    print()
+    print("=" * 60)
     print("EVALUATION RESULTS")
-    print("------------------------------------")
+    print("=" * 60)
+    print(f"Retained density = {mean_retained_density:.6f}")
+    print(f"Removal ratio    = {mean_removal_ratio:.6f}")
     print(f"PSNR = {psnr_meter.avg:.4f}")
     print(f"SSIM = {ssim_meter.avg:.4f}")
     print(f"BER  = {ber_meter.avg:.6f}")
-    print("------------------------------------")
+    print("-" * 60)
     print(f"Saved output directory -> {output_dir}")
     print(f"Summary JSON          -> {summary_path}")
     print(f"Per-image metrics     -> {per_image_path}")
-    if args.save_images:
-        print(f"Image visualizations  -> {images_dir}")
-    print("====================================")
+    print("=" * 60)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,2402 @@
+[
+    {
+        "index": 0,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.399580001831055,
+        "ssim": 0.8447590470314026,
+        "ber_batch_value": 0.5
+    },
+    {
+        "index": 1,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.296768188476562,
+        "ssim": 0.8061783909797668,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 2,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.204103469848633,
+        "ssim": 0.7500946521759033,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 3,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.157867431640625,
+        "ssim": 0.868370532989502,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 4,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.174549102783203,
+        "ssim": 0.8178704380989075,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 5,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.951444625854492,
+        "ssim": 0.8775615692138672,
+        "ber_batch_value": 0.13333333333333333
+    },
+    {
+        "index": 6,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.590110778808594,
+        "ssim": 0.9251047968864441,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 7,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.904033660888672,
+        "ssim": 0.9018464088439941,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 8,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.689647674560547,
+        "ssim": 0.8997561931610107,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 9,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.42931365966797,
+        "ssim": 0.8090129494667053,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 10,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.49064826965332,
+        "ssim": 0.8741507530212402,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 11,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.120969772338867,
+        "ssim": 0.9030086398124695,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 12,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.10980987548828,
+        "ssim": 0.8863846659660339,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 13,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.841815948486328,
+        "ssim": 0.8486354351043701,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 14,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.58635902404785,
+        "ssim": 0.8135783672332764,
+        "ber_batch_value": 0.4666666666666667
+    },
+    {
+        "index": 15,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.866783142089844,
+        "ssim": 0.908745288848877,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 16,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.358909606933594,
+        "ssim": 0.8891453742980957,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 17,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.81862449645996,
+        "ssim": 0.8920537829399109,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 18,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.689674377441406,
+        "ssim": 0.90028315782547,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 19,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 23.708629608154297,
+        "ssim": 0.5236022472381592,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 20,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 18.127113342285156,
+        "ssim": 0.7707576751708984,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 21,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.656494140625,
+        "ssim": 0.8371976017951965,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 22,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.135656356811523,
+        "ssim": 0.8748000264167786,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 23,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.99728775024414,
+        "ssim": 0.9044521450996399,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 24,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.106605529785156,
+        "ssim": 0.830254852771759,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 25,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.655996322631836,
+        "ssim": 0.9014380574226379,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 26,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.7861328125,
+        "ssim": 0.8108512759208679,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 27,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 21.483142852783203,
+        "ssim": 0.8199289441108704,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 28,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.04903793334961,
+        "ssim": 0.8661324381828308,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 29,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.62289047241211,
+        "ssim": 0.9340076446533203,
+        "ber_batch_value": 0.13333333333333333
+    },
+    {
+        "index": 30,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.8021240234375,
+        "ssim": 0.8925531506538391,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 31,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.805381774902344,
+        "ssim": 0.8934138417243958,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 32,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 21.149974822998047,
+        "ssim": 0.8187301754951477,
+        "ber_batch_value": 0.4666666666666667
+    },
+    {
+        "index": 33,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.665180206298828,
+        "ssim": 0.8793835043907166,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 34,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.54178237915039,
+        "ssim": 0.891176700592041,
+        "ber_batch_value": 0.06666666666666667
+    },
+    {
+        "index": 35,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.491037368774414,
+        "ssim": 0.9078872203826904,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 36,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.470691680908203,
+        "ssim": 0.8487849831581116,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 37,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.450809478759766,
+        "ssim": 0.8656370043754578,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 38,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.83509635925293,
+        "ssim": 0.8459169268608093,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 39,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 37.1535530090332,
+        "ssim": 0.9143669009208679,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 40,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.059406280517578,
+        "ssim": 0.8063637614250183,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 41,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.964807510375977,
+        "ssim": 0.8822488784790039,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 42,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.227798461914062,
+        "ssim": 0.8450635075569153,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 43,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.575904846191406,
+        "ssim": 0.8943083882331848,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 44,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.66775131225586,
+        "ssim": 0.8902509808540344,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 45,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.60894012451172,
+        "ssim": 0.9098079204559326,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 46,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.45626449584961,
+        "ssim": 0.7541216015815735,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 47,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.632993698120117,
+        "ssim": 0.778332531452179,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 48,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.450855255126953,
+        "ssim": 0.8444501757621765,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 49,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.16590118408203,
+        "ssim": 0.8498285412788391,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 50,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.163888931274414,
+        "ssim": 0.812717616558075,
+        "ber_batch_value": 0.4666666666666667
+    },
+    {
+        "index": 51,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.4652214050293,
+        "ssim": 0.9153022170066833,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 52,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.965652465820312,
+        "ssim": 0.8857381939888,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 53,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.372352600097656,
+        "ssim": 0.8371888995170593,
+        "ber_batch_value": 0.1
+    },
+    {
+        "index": 54,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.75852966308594,
+        "ssim": 0.9221735000610352,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 55,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.937925338745117,
+        "ssim": 0.8759738802909851,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 56,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.93709945678711,
+        "ssim": 0.8250095248222351,
+        "ber_batch_value": 0.6
+    },
+    {
+        "index": 57,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.830707550048828,
+        "ssim": 0.8445776104927063,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 58,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.124624252319336,
+        "ssim": 0.8116960525512695,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 59,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.1632080078125,
+        "ssim": 0.9403266906738281,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 60,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 23.471759796142578,
+        "ssim": 0.7867520451545715,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 61,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.789371490478516,
+        "ssim": 0.8453807830810547,
+        "ber_batch_value": 0.1
+    },
+    {
+        "index": 62,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.2410774230957,
+        "ssim": 0.9414129257202148,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 63,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.68939781188965,
+        "ssim": 0.8517095446586609,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 64,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.493331909179688,
+        "ssim": 0.8713021278381348,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 65,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.033916473388672,
+        "ssim": 0.8910600543022156,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 66,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 35.134090423583984,
+        "ssim": 0.9301589131355286,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 67,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.264772415161133,
+        "ssim": 0.8795936703681946,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 68,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 23.978349685668945,
+        "ssim": 0.8208050727844238,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 69,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.989845275878906,
+        "ssim": 0.8197999000549316,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 70,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.9469051361084,
+        "ssim": 0.8142258524894714,
+        "ber_batch_value": 0.4666666666666667
+    },
+    {
+        "index": 71,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.15243911743164,
+        "ssim": 0.8021857142448425,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 72,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.24275588989258,
+        "ssim": 0.9171434044837952,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 73,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.73798179626465,
+        "ssim": 0.8796689510345459,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 74,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.36799430847168,
+        "ssim": 0.8499477505683899,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 75,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.58030128479004,
+        "ssim": 0.8341167569160461,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 76,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.12179946899414,
+        "ssim": 0.9066293239593506,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 77,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.90549659729004,
+        "ssim": 0.8533889651298523,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 78,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.91748046875,
+        "ssim": 0.836357593536377,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 79,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.998199462890625,
+        "ssim": 0.8484819531440735,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 80,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.53557777404785,
+        "ssim": 0.8921186327934265,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 81,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.660594940185547,
+        "ssim": 0.8782207369804382,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 82,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.610536575317383,
+        "ssim": 0.8078282475471497,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 83,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.283042907714844,
+        "ssim": 0.8781673312187195,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 84,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.621641159057617,
+        "ssim": 0.7944817543029785,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 85,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.58985710144043,
+        "ssim": 0.8029651045799255,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 86,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.58201217651367,
+        "ssim": 0.9319849610328674,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 87,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.02948760986328,
+        "ssim": 0.9005098342895508,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 88,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.43601417541504,
+        "ssim": 0.791160523891449,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 89,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 36.18989944458008,
+        "ssim": 0.9171856045722961,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 90,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.94091033935547,
+        "ssim": 0.9284507632255554,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 91,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.894750595092773,
+        "ssim": 0.8028325438499451,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 92,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.241878509521484,
+        "ssim": 0.8350488543510437,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 93,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.390588760375977,
+        "ssim": 0.8391291499137878,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 94,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.55177879333496,
+        "ssim": 0.7970192432403564,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 95,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.148807525634766,
+        "ssim": 0.841614305973053,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 96,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.903106689453125,
+        "ssim": 0.8750054240226746,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 97,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.690387725830078,
+        "ssim": 0.7622852325439453,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 98,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.302122116088867,
+        "ssim": 0.7685773968696594,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 99,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.637914657592773,
+        "ssim": 0.8632574081420898,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 100,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.97832489013672,
+        "ssim": 0.834075391292572,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 101,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.46302795410156,
+        "ssim": 0.9187052845954895,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 102,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.693330764770508,
+        "ssim": 0.8275206685066223,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 103,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.616220474243164,
+        "ssim": 0.8625052571296692,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 104,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.187074661254883,
+        "ssim": 0.8897404074668884,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 105,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.429733276367188,
+        "ssim": 0.8395312428474426,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 106,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.5477180480957,
+        "ssim": 0.9161146283149719,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 107,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 37.77513885498047,
+        "ssim": 0.8942124247550964,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 108,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.533096313476562,
+        "ssim": 0.8902724385261536,
+        "ber_batch_value": 0.5666666666666667
+    },
+    {
+        "index": 109,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 19.186466217041016,
+        "ssim": 0.7598453164100647,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 110,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.053451538085938,
+        "ssim": 0.7904545664787292,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 111,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.583690643310547,
+        "ssim": 0.8330655097961426,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 112,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 23.790409088134766,
+        "ssim": 0.8265249133110046,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 113,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.137924194335938,
+        "ssim": 0.9185219407081604,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 114,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.281280517578125,
+        "ssim": 0.8624911904335022,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 115,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.747791290283203,
+        "ssim": 0.7878209948539734,
+        "ber_batch_value": 0.5
+    },
+    {
+        "index": 116,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.80167007446289,
+        "ssim": 0.9200950264930725,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 117,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.903671264648438,
+        "ssim": 0.8402349352836609,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 118,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.56641960144043,
+        "ssim": 0.8539440631866455,
+        "ber_batch_value": 0.5333333333333333
+    },
+    {
+        "index": 119,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.09249496459961,
+        "ssim": 0.8842771649360657,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 120,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.90390396118164,
+        "ssim": 0.8513606190681458,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 121,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.295114517211914,
+        "ssim": 0.8622996211051941,
+        "ber_batch_value": 0.06666666666666667
+    },
+    {
+        "index": 122,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.998104095458984,
+        "ssim": 0.9222145080566406,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 123,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.40460205078125,
+        "ssim": 0.8388940691947937,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 124,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.61638641357422,
+        "ssim": 0.8699138760566711,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 125,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.42215347290039,
+        "ssim": 0.856681764125824,
+        "ber_batch_value": 0.1
+    },
+    {
+        "index": 126,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.345794677734375,
+        "ssim": 0.8877837061882019,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 127,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.211891174316406,
+        "ssim": 0.8758090138435364,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 128,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.183658599853516,
+        "ssim": 0.8814859986305237,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 129,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.817859649658203,
+        "ssim": 0.8759515285491943,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 130,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.530838012695312,
+        "ssim": 0.8395576477050781,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 131,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.894325256347656,
+        "ssim": 0.8239046931266785,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 132,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.215160369873047,
+        "ssim": 0.8559775352478027,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 133,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.4830379486084,
+        "ssim": 0.8763096928596497,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 134,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 35.989295959472656,
+        "ssim": 0.929427444934845,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 135,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 21.838619232177734,
+        "ssim": 0.7735221982002258,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 136,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.362648010253906,
+        "ssim": 0.9241392016410828,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 137,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.616098403930664,
+        "ssim": 0.8635304570198059,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 138,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.613067626953125,
+        "ssim": 0.8715168833732605,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 139,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 20.751667022705078,
+        "ssim": 0.7890333533287048,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 140,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.990222930908203,
+        "ssim": 0.7064936757087708,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 141,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.562633514404297,
+        "ssim": 0.8446728587150574,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 142,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.866636276245117,
+        "ssim": 0.8507497906684875,
+        "ber_batch_value": 0.13333333333333333
+    },
+    {
+        "index": 143,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.572391510009766,
+        "ssim": 0.8714725375175476,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 144,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.931106567382812,
+        "ssim": 0.8798037171363831,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 145,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.482749938964844,
+        "ssim": 0.8055546879768372,
+        "ber_batch_value": 0.4666666666666667
+    },
+    {
+        "index": 146,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 19.650421142578125,
+        "ssim": 0.7974545359611511,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 147,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.911897659301758,
+        "ssim": 0.8142040371894836,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 148,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.893836975097656,
+        "ssim": 0.7969714999198914,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 149,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.875171661376953,
+        "ssim": 0.810030460357666,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 150,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.098445892333984,
+        "ssim": 0.8877406716346741,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 151,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.80167007446289,
+        "ssim": 0.9042932391166687,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 152,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 21.36996841430664,
+        "ssim": 0.8108763694763184,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 153,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.02043914794922,
+        "ssim": 0.8526296019554138,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 154,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 21.384761810302734,
+        "ssim": 0.8508267402648926,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 155,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.00838851928711,
+        "ssim": 0.8457043170928955,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 156,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.940059661865234,
+        "ssim": 0.9065874218940735,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 157,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.35504913330078,
+        "ssim": 0.9114491939544678,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 158,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.080060958862305,
+        "ssim": 0.8115188479423523,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 159,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 21.480684280395508,
+        "ssim": 0.8040318489074707,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 160,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.807655334472656,
+        "ssim": 0.8501939177513123,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 161,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.724853515625,
+        "ssim": 0.8298338055610657,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 162,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.176237106323242,
+        "ssim": 0.8648977875709534,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 163,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.29371643066406,
+        "ssim": 0.9352418780326843,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 164,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.306621551513672,
+        "ssim": 0.8316053748130798,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 165,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.1226692199707,
+        "ssim": 0.9000849723815918,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 166,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.168115615844727,
+        "ssim": 0.8880389332771301,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 167,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.86073112487793,
+        "ssim": 0.8445534706115723,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 168,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 20.563852310180664,
+        "ssim": 0.7837193608283997,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 169,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.57569122314453,
+        "ssim": 0.8033968806266785,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 170,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.324115753173828,
+        "ssim": 0.859851062297821,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 171,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.9509334564209,
+        "ssim": 0.8473438620567322,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 172,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.074230194091797,
+        "ssim": 0.8331899642944336,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 173,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.030561447143555,
+        "ssim": 0.7778750061988831,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 174,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 21.69771957397461,
+        "ssim": 0.7841331362724304,
+        "ber_batch_value": 0.6333333333333333
+    },
+    {
+        "index": 175,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.005046844482422,
+        "ssim": 0.8800933957099915,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 176,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.135540008544922,
+        "ssim": 0.8363909721374512,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 177,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.833194732666016,
+        "ssim": 0.8355288505554199,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 178,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.34208106994629,
+        "ssim": 0.8258559703826904,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 179,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.181262969970703,
+        "ssim": 0.8780383467674255,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 180,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.154903411865234,
+        "ssim": 0.8016769289970398,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 181,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 20.144746780395508,
+        "ssim": 0.7491259574890137,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 182,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.362003326416016,
+        "ssim": 0.8770480155944824,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 183,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.97024917602539,
+        "ssim": 0.8814088702201843,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 184,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.44507598876953,
+        "ssim": 0.8414523005485535,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 185,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 23.779197692871094,
+        "ssim": 0.8174111247062683,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 186,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.08430099487305,
+        "ssim": 0.9136756062507629,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 187,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.052330017089844,
+        "ssim": 0.8753336071968079,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 188,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.89273452758789,
+        "ssim": 0.8495766520500183,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 189,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.560874938964844,
+        "ssim": 0.8352707028388977,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 190,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.27952766418457,
+        "ssim": 0.8037821650505066,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 191,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.585664749145508,
+        "ssim": 0.885299026966095,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 192,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.417877197265625,
+        "ssim": 0.8591001033782959,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 193,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.045989990234375,
+        "ssim": 0.8936824798583984,
+        "ber_batch_value": 0.4666666666666667
+    },
+    {
+        "index": 194,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.58092498779297,
+        "ssim": 0.8863351941108704,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 195,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.06744384765625,
+        "ssim": 0.9121792316436768,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 196,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.245384216308594,
+        "ssim": 0.8661796450614929,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 197,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.787063598632812,
+        "ssim": 0.7686837315559387,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 198,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.395597457885742,
+        "ssim": 0.8737333416938782,
+        "ber_batch_value": 0.13333333333333333
+    },
+    {
+        "index": 199,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.47929382324219,
+        "ssim": 0.9075053334236145,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 200,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.834678649902344,
+        "ssim": 0.8868107795715332,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 201,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.577611923217773,
+        "ssim": 0.7992630004882812,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 202,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 21.2111759185791,
+        "ssim": 0.7964953780174255,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 203,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.229652404785156,
+        "ssim": 0.8953726291656494,
+        "ber_batch_value": 0.5333333333333333
+    },
+    {
+        "index": 204,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 36.175960540771484,
+        "ssim": 0.930804431438446,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 205,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.71875762939453,
+        "ssim": 0.7828260064125061,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 206,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.79023551940918,
+        "ssim": 0.8457565307617188,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 207,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.641620635986328,
+        "ssim": 0.8725902438163757,
+        "ber_batch_value": 0.13333333333333333
+    },
+    {
+        "index": 208,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.3447322845459,
+        "ssim": 0.8627511858940125,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 209,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.617599487304688,
+        "ssim": 0.8431656360626221,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 210,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.048717498779297,
+        "ssim": 0.7927014231681824,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 211,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 35.52361297607422,
+        "ssim": 0.918788731098175,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 212,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.531953811645508,
+        "ssim": 0.9143428802490234,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 213,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 38.571353912353516,
+        "ssim": 0.9182944297790527,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 214,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.327362060546875,
+        "ssim": 0.9094470143318176,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 215,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.9645938873291,
+        "ssim": 0.8294525742530823,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 216,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.043617248535156,
+        "ssim": 0.8438992500305176,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 217,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.42929458618164,
+        "ssim": 0.8272218704223633,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 218,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.106388092041016,
+        "ssim": 0.8520240783691406,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 219,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.568309783935547,
+        "ssim": 0.9194740653038025,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 220,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.67291259765625,
+        "ssim": 0.8447509407997131,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 221,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.681108474731445,
+        "ssim": 0.8163240551948547,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 222,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.0024299621582,
+        "ssim": 0.8770360350608826,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 223,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.88302993774414,
+        "ssim": 0.8191437125205994,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 224,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.910037994384766,
+        "ssim": 0.9158895015716553,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 225,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.355144500732422,
+        "ssim": 0.7801637649536133,
+        "ber_batch_value": 0.5666666666666667
+    },
+    {
+        "index": 226,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.10936164855957,
+        "ssim": 0.8478924632072449,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 227,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.933324813842773,
+        "ssim": 0.920212984085083,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 228,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 35.56421661376953,
+        "ssim": 0.9494927525520325,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 229,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.96957778930664,
+        "ssim": 0.9019417762756348,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 230,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 23.556154251098633,
+        "ssim": 0.8120104670524597,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 231,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.71548843383789,
+        "ssim": 0.8917725682258606,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 232,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.867475509643555,
+        "ssim": 0.8382453918457031,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 233,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.778623580932617,
+        "ssim": 0.8405798077583313,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 234,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 37.54269790649414,
+        "ssim": 0.9350757598876953,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 235,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.705575942993164,
+        "ssim": 0.8101790547370911,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 236,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.18390655517578,
+        "ssim": 0.8578960299491882,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 237,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.783355712890625,
+        "ssim": 0.9226129055023193,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 238,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.39641571044922,
+        "ssim": 0.9114065170288086,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 239,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.60253143310547,
+        "ssim": 0.8701420426368713,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 240,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.78508949279785,
+        "ssim": 0.7984282970428467,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 241,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.683914184570312,
+        "ssim": 0.860318660736084,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 242,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 20.514976501464844,
+        "ssim": 0.7852770686149597,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 243,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.075237274169922,
+        "ssim": 0.8322639465332031,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 244,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.90928268432617,
+        "ssim": 0.8705952763557434,
+        "ber_batch_value": 0.5666666666666667
+    },
+    {
+        "index": 245,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.73899269104004,
+        "ssim": 0.8338239192962646,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 246,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.956275939941406,
+        "ssim": 0.9097043871879578,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 247,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.629167556762695,
+        "ssim": 0.8581870198249817,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 248,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.0245475769043,
+        "ssim": 0.8682993054389954,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 249,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.128620147705078,
+        "ssim": 0.9007506966590881,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 250,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.21990966796875,
+        "ssim": 0.7350492477416992,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 251,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.75128746032715,
+        "ssim": 0.835946261882782,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 252,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.623321533203125,
+        "ssim": 0.9116173386573792,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 253,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 23.142850875854492,
+        "ssim": 0.8053860664367676,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 254,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.27735137939453,
+        "ssim": 0.8724184036254883,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 255,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.145763397216797,
+        "ssim": 0.8652918338775635,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 256,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.511627197265625,
+        "ssim": 0.9008062481880188,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 257,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.698410034179688,
+        "ssim": 0.8394286036491394,
+        "ber_batch_value": 0.06666666666666667
+    },
+    {
+        "index": 258,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.031696319580078,
+        "ssim": 0.8298384547233582,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 259,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.504289627075195,
+        "ssim": 0.8847646117210388,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 260,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.467803955078125,
+        "ssim": 0.898594319820404,
+        "ber_batch_value": 0.4
+    },
+    {
+        "index": 261,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.925710678100586,
+        "ssim": 0.8615278601646423,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 262,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.378849029541016,
+        "ssim": 0.8743569254875183,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 263,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.261371612548828,
+        "ssim": 0.8810402750968933,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 264,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.722383499145508,
+        "ssim": 0.839676558971405,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 265,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.62001609802246,
+        "ssim": 0.8081809878349304,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 266,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.44716453552246,
+        "ssim": 0.878559410572052,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 267,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 35.73610305786133,
+        "ssim": 0.9125143885612488,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 268,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.177127838134766,
+        "ssim": 0.8548986315727234,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 269,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.874855041503906,
+        "ssim": 0.8909080624580383,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 270,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.549198150634766,
+        "ssim": 0.8166548609733582,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 271,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.075923919677734,
+        "ssim": 0.8860710263252258,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 272,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.46980857849121,
+        "ssim": 0.8275840878486633,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 273,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.25533103942871,
+        "ssim": 0.8327164649963379,
+        "ber_batch_value": 0.5
+    },
+    {
+        "index": 274,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.7719783782959,
+        "ssim": 0.9113990664482117,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 275,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.25299835205078,
+        "ssim": 0.8337967395782471,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 276,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.497957229614258,
+        "ssim": 0.8157596588134766,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 277,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 33.087249755859375,
+        "ssim": 0.8887367248535156,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 278,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 21.82918930053711,
+        "ssim": 0.7794257998466492,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 279,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 25.62864112854004,
+        "ssim": 0.8232738375663757,
+        "ber_batch_value": 0.4666666666666667
+    },
+    {
+        "index": 280,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.871910095214844,
+        "ssim": 0.8646276593208313,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 281,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.67300796508789,
+        "ssim": 0.7688595652580261,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 282,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.641698837280273,
+        "ssim": 0.8737035393714905,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 283,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 26.507160186767578,
+        "ssim": 0.8472560048103333,
+        "ber_batch_value": 0.5666666666666667
+    },
+    {
+        "index": 284,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.583940505981445,
+        "ssim": 0.7843653559684753,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 285,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.593257904052734,
+        "ssim": 0.8722994923591614,
+        "ber_batch_value": 0.16666666666666666
+    },
+    {
+        "index": 286,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 24.77564811706543,
+        "ssim": 0.792504608631134,
+        "ber_batch_value": 0.5
+    },
+    {
+        "index": 287,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.204519271850586,
+        "ssim": 0.83152836561203,
+        "ber_batch_value": 0.3333333333333333
+    },
+    {
+        "index": 288,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 30.871732711791992,
+        "ssim": 0.9143219590187073,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 289,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.72590446472168,
+        "ssim": 0.7949366569519043,
+        "ber_batch_value": 0.4666666666666667
+    },
+    {
+        "index": 290,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 22.72137451171875,
+        "ssim": 0.7871301770210266,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 291,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 21.890872955322266,
+        "ssim": 0.783388614654541,
+        "ber_batch_value": 0.5
+    },
+    {
+        "index": 292,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 31.025667190551758,
+        "ssim": 0.8948874473571777,
+        "ber_batch_value": 0.43333333333333335
+    },
+    {
+        "index": 293,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 32.302120208740234,
+        "ssim": 0.8961042761802673,
+        "ber_batch_value": 0.26666666666666666
+    },
+    {
+        "index": 294,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.97724723815918,
+        "ssim": 0.8118335604667664,
+        "ber_batch_value": 0.3
+    },
+    {
+        "index": 295,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 29.42275047302246,
+        "ssim": 0.8191914558410645,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 296,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.983184814453125,
+        "ssim": 0.8151862025260925,
+        "ber_batch_value": 0.23333333333333334
+    },
+    {
+        "index": 297,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 27.029943466186523,
+        "ssim": 0.8356595039367676,
+        "ber_batch_value": 0.36666666666666664
+    },
+    {
+        "index": 298,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 34.78583526611328,
+        "ssim": 0.9321837425231934,
+        "ber_batch_value": 0.2
+    },
+    {
+        "index": 299,
+        "retained_density": 0.29998779296875,
+        "removal_ratio": 0.70001220703125,
+        "psnr": 28.531875610351562,
+        "ssim": 0.8822525143623352,
+        "ber_batch_value": 0.23333333333333334
+    }
+]
