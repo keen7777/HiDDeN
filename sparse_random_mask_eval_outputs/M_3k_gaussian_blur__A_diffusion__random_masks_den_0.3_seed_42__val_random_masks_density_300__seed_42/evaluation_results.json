@@ -1,0 +1,35 @@
+{
+    "run_name": "3k_gaussian_blur 2026.05.26--18-42-22",
+    "model_name": "3k_gaussian_blur",
+    "checkpoint": "/home/keen/HiDDeN/runs/3k_gaussian_blur 2026.05.26--18-42-22/checkpoints/3k_gaussian_blur--epoch-400.pyt",
+    "checkpoint_epoch": 400,
+    "attack": "diffusion",
+    "mask_type": "optimized_sparse_ps_nlpe",
+    "mask_file": "/home/keen/HiDDeN/sparse_random_masks_data/random_masks_den_0.3_seed_42/val_random_masks_density_300.npy",
+    "mask_count": 300,
+    "mask_shape": [
+        300,
+        128,
+        128
+    ],
+    "stored_mask_convention": "1 = retained/known, 0 = removed/reconstructed",
+    "fill_mask_convention": "1 = removed/reconstructed, 0 = retained/known",
+    "mean_retained_density": 0.29998779296875,
+    "mean_removal_ratio": 0.70001220703125,
+    "measured_removal_ratio": 0.70001220703125,
+    "tau": 0.25,
+    "diffusion_iterations": 150,
+    "message_seed": 42,
+    "batch_size": 1,
+    "processed_images": 300,
+    "psnr": 25.07407430966695,
+    "ssim": 0.7626674130558968,
+    "ber": 0.1395555555555558,
+    "saved_visualizations": 10,
+    "output_dir": "/home/keen/HiDDeN/sparse_random_mask_eval_outputs/M_3k_gaussian_blur__A_diffusion__random_masks_den_0.3_seed_42__val_random_masks_density_300__seed_42",
+    "files": {
+        "summary_json": "/home/keen/HiDDeN/sparse_random_mask_eval_outputs/M_3k_gaussian_blur__A_diffusion__random_masks_den_0.3_seed_42__val_random_masks_density_300__seed_42/evaluation_results.json",
+        "per_image_metrics_json": "/home/keen/HiDDeN/sparse_random_mask_eval_outputs/M_3k_gaussian_blur__A_diffusion__random_masks_den_0.3_seed_42__val_random_masks_density_300__seed_42/per_image_metrics.json",
+        "run_config_json": "/home/keen/HiDDeN/sparse_random_mask_eval_outputs/M_3k_gaussian_blur__A_diffusion__random_masks_den_0.3_seed_42__val_random_masks_density_300__seed_42/run_config.json"
+    }
+}

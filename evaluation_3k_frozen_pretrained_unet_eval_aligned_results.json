@@ -1,0 +1,13 @@
+{
+    "3k_frozen_pretrained_unet_eval_aligned": {
+        "seed": 42,
+        "num_images": 300,
+        "checkpoint_epoch": 400,
+        "psnr": 33.3698,
+        "psnr_y": 35.2801,
+        "psnr_u": 41.189,
+        "psnr_v": 37.1762,
+        "ssim": 0.9286,
+        "ber": 0.025333
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "3k_gaussian_blur": {
+        "seed": 42,
+        "num_images": 300,
+        "checkpoint_epoch": 400,
+        "psnr": 33.0676,
+        "psnr_y": 34.7148,
+        "psnr_u": 40.1832,
+        "psnr_v": 36.7748,
+        "ssim": 0.9212,
+        "ber": 0.076333
+    }
+}

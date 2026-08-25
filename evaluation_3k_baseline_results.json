@@ -1,0 +1,13 @@
+{
+    "3k_baseline": {
+        "seed": 42,
+        "num_images": 300,
+        "checkpoint_epoch": 400,
+        "psnr": 34.2996,
+        "psnr_y": 36.0733,
+        "psnr_u": 40.8683,
+        "psnr_v": 38.5756,
+        "ssim": 0.9436,
+        "ber": 0.027333
+    }
+}
