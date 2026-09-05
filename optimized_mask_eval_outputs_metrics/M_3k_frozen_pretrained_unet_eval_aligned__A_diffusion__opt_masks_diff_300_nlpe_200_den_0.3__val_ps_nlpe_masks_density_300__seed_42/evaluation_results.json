@@ -1,0 +1,39 @@
+{
+    "run_name": "3k_frozen_pretrained_unet_eval_aligned 2026.08.24--04-07-29",
+    "model_name": "3k_frozen_pretrained_unet_eval_aligned",
+    "checkpoint": "/home/keen/HiDDeN/runs/3k_frozen_pretrained_unet_eval_aligned 2026.08.24--04-07-29/checkpoints/3k_frozen_pretrained_unet_eval_aligned--epoch-400.pyt",
+    "checkpoint_epoch": 400,
+    "attack": "diffusion",
+    "mask_type": "optimized_sparse_ps_nlpe",
+    "mask_file": "/home/keen/HiDDeN/opt_masks_data/opt_masks_diff_300_nlpe_200_den_0.3/val_ps_nlpe_masks_density_300.npy",
+    "mask_count": 300,
+    "mask_shape": [
+        300,
+        128,
+        128
+    ],
+    "stored_mask_convention": "1 = retained/known, 0 = removed/reconstructed",
+    "fill_mask_convention": "1 = removed/reconstructed, 0 = retained/known",
+    "mean_retained_density": 0.29998779296875,
+    "mean_removal_ratio": 0.70001220703125,
+    "measured_removal_ratio": 0.70001220703125,
+    "tau": 0.25,
+    "diffusion_iterations": 150,
+    "message_seed": 42,
+    "batch_size": 1,
+    "processed_images": 300,
+    "psnr": 31.21530803044637,
+    "ssim": 0.901153798699379,
+    "psnr_final": 31.21530803044637,
+    "ssim_final": 0.901153798699379,
+    "psnr_attack": 32.684312699635825,
+    "ssim_attack": 0.9038698607683182,
+    "ber": 0.25344444444444447,
+    "saved_visualizations": 10,
+    "output_dir": "/home/keen/HiDDeN/optimized_mask_eval_outputs_metrics/M_3k_frozen_pretrained_unet_eval_aligned__A_diffusion__opt_masks_diff_300_nlpe_200_den_0.3__val_ps_nlpe_masks_density_300__seed_42",
+    "files": {
+        "summary_json": "/home/keen/HiDDeN/optimized_mask_eval_outputs_metrics/M_3k_frozen_pretrained_unet_eval_aligned__A_diffusion__opt_masks_diff_300_nlpe_200_den_0.3__val_ps_nlpe_masks_density_300__seed_42/evaluation_results.json",
+        "per_image_metrics_json": "/home/keen/HiDDeN/optimized_mask_eval_outputs_metrics/M_3k_frozen_pretrained_unet_eval_aligned__A_diffusion__opt_masks_diff_300_nlpe_200_den_0.3__val_ps_nlpe_masks_density_300__seed_42/per_image_metrics.json",
+        "run_config_json": "/home/keen/HiDDeN/optimized_mask_eval_outputs_metrics/M_3k_frozen_pretrained_unet_eval_aligned__A_diffusion__opt_masks_diff_300_nlpe_200_den_0.3__val_ps_nlpe_masks_density_300__seed_42/run_config.json"
+    }
+}

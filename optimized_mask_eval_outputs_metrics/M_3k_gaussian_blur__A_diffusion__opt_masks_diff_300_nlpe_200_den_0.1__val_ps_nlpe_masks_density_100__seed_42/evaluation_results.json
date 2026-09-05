@@ -1,0 +1,39 @@
+{
+    "run_name": "3k_gaussian_blur 2026.05.26--18-42-22",
+    "model_name": "3k_gaussian_blur",
+    "checkpoint": "/home/keen/HiDDeN/runs/3k_gaussian_blur 2026.05.26--18-42-22/checkpoints/3k_gaussian_blur--epoch-400.pyt",
+    "checkpoint_epoch": 400,
+    "attack": "diffusion",
+    "mask_type": "optimized_sparse_ps_nlpe",
+    "mask_file": "/home/keen/HiDDeN/opt_masks_data/opt_masks_diff_300_nlpe_200_den_0.1/val_ps_nlpe_masks_density_100.npy",
+    "mask_count": 300,
+    "mask_shape": [
+        300,
+        128,
+        128
+    ],
+    "stored_mask_convention": "1 = retained/known, 0 = removed/reconstructed",
+    "fill_mask_convention": "1 = removed/reconstructed, 0 = retained/known",
+    "mean_retained_density": 0.0999755859375,
+    "mean_removal_ratio": 0.9000244140625,
+    "measured_removal_ratio": 0.9000244140625,
+    "tau": 0.25,
+    "diffusion_iterations": 150,
+    "message_seed": 42,
+    "batch_size": 1,
+    "processed_images": 300,
+    "psnr": 25.27432148615519,
+    "ssim": 0.7501850392421087,
+    "psnr_final": 25.27432148615519,
+    "ssim_final": 0.7501850392421087,
+    "psnr_attack": 25.406383323669434,
+    "ssim_attack": 0.731857199370861,
+    "ber": 0.38277777777777755,
+    "saved_visualizations": 10,
+    "output_dir": "/home/keen/HiDDeN/optimized_mask_eval_outputs_metrics/M_3k_gaussian_blur__A_diffusion__opt_masks_diff_300_nlpe_200_den_0.1__val_ps_nlpe_masks_density_100__seed_42",
+    "files": {
+        "summary_json": "/home/keen/HiDDeN/optimized_mask_eval_outputs_metrics/M_3k_gaussian_blur__A_diffusion__opt_masks_diff_300_nlpe_200_den_0.1__val_ps_nlpe_masks_density_100__seed_42/evaluation_results.json",
+        "per_image_metrics_json": "/home/keen/HiDDeN/optimized_mask_eval_outputs_metrics/M_3k_gaussian_blur__A_diffusion__opt_masks_diff_300_nlpe_200_den_0.1__val_ps_nlpe_masks_density_100__seed_42/per_image_metrics.json",
+        "run_config_json": "/home/keen/HiDDeN/optimized_mask_eval_outputs_metrics/M_3k_gaussian_blur__A_diffusion__opt_masks_diff_300_nlpe_200_den_0.1__val_ps_nlpe_masks_density_100__seed_42/run_config.json"
+    }
+}

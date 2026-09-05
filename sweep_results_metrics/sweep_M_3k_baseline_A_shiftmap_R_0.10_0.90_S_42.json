@@ -1,0 +1,112 @@
+{
+    "run_name": "3k_baseline 2026.05.13--12-17-40",
+    "model_name": "3k_baseline",
+    "checkpoint_epoch": 400,
+    "attack": "shiftmap",
+    "seed": 42,
+    "num_images": 300,
+    "batch_size": 1,
+    "mask_convention": "1 = removed/reconstructed, 0 = retained/known",
+    "ratio_definition": "removal_ratio = fraction of image pixels removed before reconstruction",
+    "results": {
+        "0.100": {
+            "target_removal_ratio": 0.1,
+            "actual_removal_ratio": 0.09978108723958333,
+            "psnr": 25.485790201822915,
+            "ssim": 0.8770013139645259,
+            "psnr_final": 25.485790201822915,
+            "ssim_final": 0.8770013139645259,
+            "psnr_attack": 26.39471996943156,
+            "ssim_attack": 0.9239960108200709,
+            "ber": 0.027444444444444417
+        },
+        "0.200": {
+            "target_removal_ratio": 0.2,
+            "actual_removal_ratio": 0.1997991943359375,
+            "psnr": 21.951953341166178,
+            "ssim": 0.8022500920295715,
+            "psnr_final": 21.951953341166178,
+            "ssim_final": 0.8022500920295715,
+            "psnr_attack": 22.30899889310201,
+            "ssim_attack": 0.8434718666474025,
+            "ber": 0.029888888888888854
+        },
+        "0.300": {
+            "target_removal_ratio": 0.30000000000000004,
+            "actual_removal_ratio": 0.2998077392578125,
+            "psnr": 19.492884543736775,
+            "ssim": 0.7238247706492742,
+            "psnr_final": 19.492884543736775,
+            "ssim_final": 0.7238247706492742,
+            "psnr_attack": 19.670927724838258,
+            "ssim_attack": 0.7591300437847773,
+            "ber": 0.03188888888888884
+        },
+        "0.400": {
+            "target_removal_ratio": 0.4,
+            "actual_removal_ratio": 0.39980712890625,
+            "psnr": 17.81795007387797,
+            "ssim": 0.6461289809147517,
+            "psnr_final": 17.81795007387797,
+            "ssim_final": 0.6461289809147517,
+            "psnr_attack": 17.913291918436688,
+            "ssim_attack": 0.6758454887072245,
+            "ber": 0.036555555555555494
+        },
+        "0.500": {
+            "target_removal_ratio": 0.5,
+            "actual_removal_ratio": 0.4997955322265625,
+            "psnr": 16.193049313227334,
+            "ssim": 0.5578612767656644,
+            "psnr_final": 16.193049313227334,
+            "ssim_final": 0.5578612767656644,
+            "psnr_attack": 16.25013743718465,
+            "ssim_attack": 0.5822441715995471,
+            "ber": 0.04433333333333324
+        },
+        "0.600": {
+            "target_removal_ratio": 0.6,
+            "actual_removal_ratio": 0.5997798665364583,
+            "psnr": 14.91220074335734,
+            "ssim": 0.472663813829422,
+            "psnr_final": 14.91220074335734,
+            "ssim_final": 0.472663813829422,
+            "psnr_attack": 14.950527588526407,
+            "ssim_attack": 0.4916108277440071,
+            "ber": 0.05044444444444434
+        },
+        "0.700": {
+            "target_removal_ratio": 0.7000000000000001,
+            "actual_removal_ratio": 0.6998195393880209,
+            "psnr": 13.809058804512023,
+            "ssim": 0.38371065497398377,
+            "psnr_final": 13.809058804512023,
+            "ssim_final": 0.38371065497398377,
+            "psnr_attack": 13.834762856165568,
+            "ssim_attack": 0.3975093654791514,
+            "ber": 0.06933333333333333
+        },
+        "0.800": {
+            "target_removal_ratio": 0.8,
+            "actual_removal_ratio": 0.7998024495442708,
+            "psnr": 12.609755126635234,
+            "ssim": 0.27486955518523853,
+            "psnr_final": 12.609755126635234,
+            "ssim_final": 0.27486955518523853,
+            "psnr_attack": 12.622210426330566,
+            "ssim_attack": 0.28356082235773405,
+            "ber": 0.11244444444444464
+        },
+        "0.900": {
+            "target_removal_ratio": 0.9,
+            "actual_removal_ratio": 0.8998551432291667,
+            "psnr": 10.581669718424479,
+            "ssim": 0.12464730656395356,
+            "psnr_final": 10.581669718424479,
+            "ssim_final": 0.12464730656395356,
+            "psnr_attack": 10.564548830986023,
+            "ssim_attack": 0.12808741558343173,
+            "ber": 0.2886666666666666
+        }
+    }
+}

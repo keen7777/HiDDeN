@@ -5,7 +5,8 @@ import json
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont
+from torchvision import transforms
 
 
 # ============================================================
@@ -83,21 +84,40 @@ def load_center_crop_rgb(
     image_size: int = 128,
 ) -> np.ndarray:
     """
-    Load image as RGB and center-crop/resize to image_size x image_size.
+    Load one image and apply the same CenterCrop used by the
+    validation DataLoader and optimized-mask preprocessing.
 
     Returns:
-        np.ndarray of shape [H, W, 3], float32 in [0, 1]
+        np.ndarray of shape [H, W, 3],
+        float32 in [0, 1]
     """
-    image = Image.open(image_path).convert("RGB")
 
-    # ImageOps.fit does center crop + resize
-    image = ImageOps.fit(
-        image,
-        (image_size, image_size),
-        method=Image.Resampling.LANCZOS,
+    center_crop = transforms.CenterCrop(
+        (image_size, image_size)
     )
 
-    image_np = np.asarray(image).astype(np.float32) / 255.0
+    with Image.open(image_path) as image:
+        image = image.convert("RGB")
+
+        image = center_crop(image)
+
+        image_np = np.asarray(
+            image,
+            dtype=np.float32,
+        ) / 255.0
+
+    expected_shape = (
+        image_size,
+        image_size,
+        3,
+    )
+
+    if image_np.shape != expected_shape:
+        raise ValueError(
+            f"Unexpected crop shape for {image_path}: "
+            f"{image_np.shape}; expected {expected_shape}"
+        )
+
     return image_np
 
 
@@ -176,7 +196,11 @@ def mask_to_pil(
     mask_uint8 = (
         mask.astype(np.uint8) * 255
     )
-    return Image.fromarray(mask_uint8, mode="L")
+
+    return Image.fromarray(
+        mask_uint8,
+        mode="L"
+    )
 
 
 def apply_mask_for_visualization(
@@ -193,7 +217,11 @@ def apply_mask_for_visualization(
     Missing pixels are shown as black.
     """
     masked_image = image.copy()
-    masked_image[mask == 0] = 0.0
+
+    masked_image[
+        mask == 0
+    ] = 0.0
+
     return masked_image
 
 
@@ -247,30 +275,52 @@ def save_comparison_image(
         crop | mask | masked image
     """
     tiles = [
-        add_label(crop_image, "Center crop"),
-        add_label(random_mask_image, "Random sparse mask"),
-        add_label(random_masked_image, "Random known pixels"),
+        add_label(
+            crop_image,
+            "Center crop"
+        ),
+        add_label(
+            random_mask_image,
+            "Random sparse mask"
+        ),
+        add_label(
+            random_masked_image,
+            "Random known pixels"
+        ),
     ]
 
     panel_width = sum(
-        tile.width for tile in tiles
+        tile.width
+        for tile in tiles
     )
+
     panel_height = max(
-        tile.height for tile in tiles
+        tile.height
+        for tile in tiles
     )
 
     panel = Image.new(
         "RGB",
-        (panel_width, panel_height),
+        (
+            panel_width,
+            panel_height,
+        ),
         color="white",
     )
 
     current_x = 0
+
     for tile in tiles:
-        panel.paste(tile, (current_x, 0))
+        panel.paste(
+            tile,
+            (current_x, 0)
+        )
+
         current_x += tile.width
 
-    panel.save(output_path)
+    panel.save(
+        output_path
+    )
 
 
 def save_random_mask_visualizations(
@@ -290,19 +340,26 @@ def save_random_mask_visualizations(
         f"{index:04d}_{image_path.stem}"
     )
 
-    crop_image = float_rgb_to_pil(image)
-    random_mask_image = mask_to_pil(random_mask)
+    crop_image = float_rgb_to_pil(
+        image
+    )
+
+    random_mask_image = mask_to_pil(
+        random_mask
+    )
 
     random_masked = apply_mask_for_visualization(
         image=image,
         mask=random_mask,
     )
+
     random_masked_image = float_rgb_to_pil(
         random_masked
     )
 
     crop_image.save(
-        crop_dir / f"{safe_stem}_crop.png"
+        crop_dir
+        / f"{safe_stem}_crop.png"
     )
 
     random_mask_image.save(
@@ -338,7 +395,13 @@ def save_json(
         parents=True,
         exist_ok=True,
     )
-    with open(path, "w", encoding="utf-8") as f:
+
+    with open(
+        path,
+        "w",
+        encoding="utf-8",
+    ) as f:
+
         json.dump(
             obj,
             f,
@@ -352,64 +415,122 @@ def save_json(
 # ============================================================
 
 def main():
+
     print("=" * 60)
     print("RANDOM SPARSE MASK PRECOMPUTATION")
     print("=" * 60)
-    print(f"Image directory : {IMAGE_DIR}")
-    print(f"Output root     : {OUTPUT_ROOT}")
-    print(f"Image size      : {IMAGE_SIZE}")
-    print(f"Densities       : {DENSITIES}")
-    print(f"Seed            : {SEED}")
-    print(f"Visualizations  : {SAVE_VISUALIZATIONS}")
+
     print(
-        f"Visualization limit: {VISUALIZATION_LIMIT}"
+        f"Image directory : {IMAGE_DIR}"
     )
+
+    print(
+        f"Output root     : {OUTPUT_ROOT}"
+    )
+
+    print(
+        f"Image size      : {IMAGE_SIZE}"
+    )
+
+    print(
+        f"Densities       : {DENSITIES}"
+    )
+
+    print(
+        f"Seed            : {SEED}"
+    )
+
+    print(
+        f"Visualizations  : {SAVE_VISUALIZATIONS}"
+    )
+
+    print(
+        f"Visualization limit: "
+        f"{VISUALIZATION_LIMIT}"
+    )
+
     print("=" * 60)
 
-    image_paths = collect_image_paths(IMAGE_DIR)
-    print(
-        f"Found {len(image_paths)} input images."
+
+    image_paths = collect_image_paths(
+        IMAGE_DIR
     )
+
+    print(
+        f"Found {len(image_paths)} "
+        f"input images."
+    )
+
 
     # fixed ordering
     image_ids = [
-        path.stem for path in image_paths
+        path.stem
+        for path in image_paths
     ]
 
+
     for density in DENSITIES:
-        density_tag = f"{density:.1f}"
-        density_int = int(round(density * 1000))
+
+        density_tag = (
+            f"{density:.1f}"
+        )
+
+        density_int = int(
+            round(
+                density * 1000
+            )
+        )
+
 
         run_dir = (
             OUTPUT_ROOT
-            / f"random_masks_den_{density_tag}_seed_{SEED}"
+            / (
+                f"random_masks_den_"
+                f"{density_tag}_seed_{SEED}"
+            )
         )
+
         run_dir.mkdir(
             parents=True,
             exist_ok=True,
         )
 
+
         masks = []
         mapping = []
 
+
+        # ====================================================
         # Visualization directories
+        # ====================================================
+
         if SAVE_VISUALIZATIONS:
+
             visualization_dir = (
-                run_dir / "visualizations"
+                run_dir
+                / "visualizations"
             )
+
             crop_dir = (
-                visualization_dir / "center_crops"
+                visualization_dir
+                / "center_crops"
             )
+
             random_mask_dir = (
-                visualization_dir / "random_masks"
+                visualization_dir
+                / "random_masks"
             )
+
             random_masked_dir = (
                 visualization_dir
                 / "random_masked_images"
             )
+
             comparison_dir = (
-                visualization_dir / "comparisons"
+                visualization_dir
+                / "comparisons"
             )
+
 
             for directory in [
                 crop_dir,
@@ -417,27 +538,39 @@ def main():
                 random_masked_dir,
                 comparison_dir,
             ]:
+
                 directory.mkdir(
                     parents=True,
                     exist_ok=True,
                 )
 
-        print("-" * 60)
-        print(
-            f"Generating masks for retained density = {density:.3f}"
-        )
+
         print("-" * 60)
 
-        # use a density-specific RNG so each density is deterministic
+        print(
+            f"Generating masks for "
+            f"retained density = {density:.3f}"
+        )
+
+        print("-" * 60)
+
+
+        # use a density-specific RNG
+        # so each density is deterministic
         rng = np.random.RandomState(
             SEED + density_int
         )
 
-        for index, image_path in enumerate(image_paths):
+
+        for index, image_path in enumerate(
+            image_paths
+        ):
+
             image_np = load_center_crop_rgb(
                 image_path=image_path,
                 image_size=IMAGE_SIZE,
             )
+
 
             mask = generate_random_sparse_mask(
                 height=IMAGE_SIZE,
@@ -446,39 +579,56 @@ def main():
                 rng=rng,
             )
 
-            masks.append(mask)
+
+            masks.append(
+                mask
+            )
+
 
             retained_density_actual = float(
                 mask.mean()
             )
+
             removal_ratio_actual = float(
-                1.0 - retained_density_actual
+                1.0
+                - retained_density_actual
             )
+
 
             mapping.append(
                 {
-                    "index": index,
-                    "image_id": image_path.stem,
-                    "image_filename": image_path.name,
-                    "mask_filename": (
-                        f"mask_{index:04d}.npy"
-                    ),
-                    "retained_density": (
-                        retained_density_actual
-                    ),
-                    "removal_ratio": (
-                        removal_ratio_actual
-                    ),
+                    "index":
+                        index,
+
+                    "image_id":
+                        image_path.stem,
+
+                    "image_filename":
+                        image_path.name,
+
+                    "mask_filename":
+                        f"mask_{index:04d}.npy",
+
+                    "retained_density":
+                        retained_density_actual,
+
+                    "removal_ratio":
+                        removal_ratio_actual,
                 }
             )
 
+
             if SAVE_VISUALIZATIONS:
+
                 should_save_visualization = (
                     VISUALIZATION_LIMIT is None
-                    or index < VISUALIZATION_LIMIT
+                    or
+                    index < VISUALIZATION_LIMIT
                 )
 
+
                 if should_save_visualization:
+
                     save_random_mask_visualizations(
                         image=image_np,
                         random_mask=mask,
@@ -490,110 +640,207 @@ def main():
                         comparison_dir=comparison_dir,
                     )
 
+
             if (index + 1) % 50 == 0:
+
                 print(
-                    f"Processed {index + 1}/{len(image_paths)}"
+                    f"Processed "
+                    f"{index + 1}/"
+                    f"{len(image_paths)}"
                 )
+
 
         masks = np.stack(
             masks,
             axis=0,
-        ).astype(np.uint8)
+        ).astype(
+            np.uint8
+        )
+
 
         mean_retained_density = float(
             masks.mean()
         )
+
         mean_removal_ratio = float(
-            1.0 - mean_retained_density
+            1.0
+            - mean_retained_density
         )
+
+
+        # ====================================================
+        # output files
+        # ====================================================
 
         mask_file = (
             run_dir
-            / f"val_random_masks_density_{density_int}.npy"
-        )
-        image_ids_file = (
-            run_dir
-            / f"val_image_ids_density_{density_int}.json"
-        )
-        mapping_file = (
-            run_dir
-            / f"val_mask_mapping_density_{density_int}.json"
-        )
-        config_file = (
-            run_dir
-            / f"val_config_density_{density_int}.json"
+            / (
+                f"val_random_masks_"
+                f"density_{density_int}.npy"
+            )
         )
 
-        np.save(mask_file, masks)
+        image_ids_file = (
+            run_dir
+            / (
+                f"val_image_ids_"
+                f"density_{density_int}.json"
+            )
+        )
+
+        mapping_file = (
+            run_dir
+            / (
+                f"val_mask_mapping_"
+                f"density_{density_int}.json"
+            )
+        )
+
+        config_file = (
+            run_dir
+            / (
+                f"val_config_"
+                f"density_{density_int}.json"
+            )
+        )
+
+
+        np.save(
+            mask_file,
+            masks,
+        )
+
 
         save_json(
             image_ids,
             image_ids_file,
         )
 
+
         save_json(
             mapping,
             mapping_file,
         )
 
+
         config = {
-            "mask_type": "random_sparse",
-            "mask_count": int(masks.shape[0]),
-            "mask_shape": list(masks.shape),
-            "image_size": IMAGE_SIZE,
-            "seed": SEED,
-            "target_retained_density": density,
-            "target_removal_ratio": 1.0 - density,
-            "mean_retained_density": mean_retained_density,
-            "mean_removal_ratio": mean_removal_ratio,
-            "stored_mask_convention": (
-                "1 = retained/known, 0 = removed/reconstructed"
-            ),
-            "image_directory": str(IMAGE_DIR),
-            "output_directory": str(run_dir),
-            "visualizations_saved": bool(
-                SAVE_VISUALIZATIONS
-            ),
-            "visualization_limit": VISUALIZATION_LIMIT,
+
+            "mask_type":
+                "random_sparse",
+
+            "mask_count":
+                int(
+                    masks.shape[0]
+                ),
+
+            "mask_shape":
+                list(
+                    masks.shape
+                ),
+
+            "image_size":
+                IMAGE_SIZE,
+
+            "seed":
+                SEED,
+
+            "target_retained_density":
+                density,
+
+            "target_removal_ratio":
+                1.0 - density,
+
+            "mean_retained_density":
+                mean_retained_density,
+
+            "mean_removal_ratio":
+                mean_removal_ratio,
+
+            "stored_mask_convention":
+                (
+                    "1 = retained/known, "
+                    "0 = removed/reconstructed"
+                ),
+
+            "image_directory":
+                str(
+                    IMAGE_DIR
+                ),
+
+            "output_directory":
+                str(
+                    run_dir
+                ),
+
+            "visualizations_saved":
+                bool(
+                    SAVE_VISUALIZATIONS
+                ),
+
+            "visualization_limit":
+                VISUALIZATION_LIMIT,
         }
+
 
         save_json(
             config,
             config_file,
         )
 
+
         print()
+
         print(
-            f"Finished density {density:.3f}"
+            f"Finished density "
+            f"{density:.3f}"
         )
+
         print(
-            f"Saved masks      : {mask_file}"
+            f"Saved masks      : "
+            f"{mask_file}"
         )
+
         print(
-            f"Saved image ids  : {image_ids_file}"
+            f"Saved image ids  : "
+            f"{image_ids_file}"
         )
+
         print(
-            f"Saved mapping    : {mapping_file}"
+            f"Saved mapping    : "
+            f"{mapping_file}"
         )
+
         print(
-            f"Saved config     : {config_file}"
+            f"Saved config     : "
+            f"{config_file}"
         )
+
         print(
-            f"Mean retained density : {mean_retained_density:.6f}"
+            f"Mean retained density : "
+            f"{mean_retained_density:.6f}"
         )
+
         print(
-            f"Mean removal ratio    : {mean_removal_ratio:.6f}"
+            f"Mean removal ratio    : "
+            f"{mean_removal_ratio:.6f}"
         )
+
 
         if SAVE_VISUALIZATIONS:
+
             print(
-                f"Visualizations root   : {visualization_dir}"
-            )
-            print(
-                f"Comparison panels     : {comparison_dir}"
+                f"Visualizations root   : "
+                f"{visualization_dir}"
             )
 
+            print(
+                f"Comparison panels     : "
+                f"{comparison_dir}"
+            )
+
+
         print()
+
 
     print("=" * 60)
     print("DONE")

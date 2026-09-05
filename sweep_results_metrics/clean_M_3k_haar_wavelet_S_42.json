@@ -1,0 +1,24 @@
+{
+    "run_name": "3k_haar_wavelet 2026.05.26--12-12-55",
+    "model_name": "3k_haar_wavelet",
+    "checkpoint_epoch": 400,
+    "attack": "identity",
+    "seed": 42,
+    "num_images": 300,
+    "batch_size": 1,
+    "mask_convention": "1 = removed/reconstructed, 0 = retained/known",
+    "ratio_definition": "Identity evaluation: no pixels are removed.",
+    "results": {
+        "0.000": {
+            "target_removal_ratio": 0.0,
+            "actual_removal_ratio": 0.0,
+            "psnr": 29.811589921315512,
+            "ssim": 0.907318149805069,
+            "psnr_final": 29.811589921315512,
+            "ssim_final": 0.907318149805069,
+            "psnr_attack": null,
+            "ssim_attack": null,
+            "ber": 0.0642222222222222
+        }
+    }
+}

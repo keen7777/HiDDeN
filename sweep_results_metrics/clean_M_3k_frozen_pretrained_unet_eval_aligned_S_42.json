@@ -1,0 +1,24 @@
+{
+    "run_name": "3k_frozen_pretrained_unet_eval_aligned 2026.08.24--04-07-29",
+    "model_name": "3k_frozen_pretrained_unet_eval_aligned",
+    "checkpoint_epoch": 400,
+    "attack": "identity",
+    "seed": 42,
+    "num_images": 300,
+    "batch_size": 1,
+    "mask_convention": "1 = removed/reconstructed, 0 = retained/known",
+    "ratio_definition": "Identity evaluation: no pixels are removed.",
+    "results": {
+        "0.000": {
+            "target_removal_ratio": 0.0,
+            "actual_removal_ratio": 0.0,
+            "psnr": 33.48878993352254,
+            "ssim": 0.9339676141738892,
+            "psnr_final": 33.48878993352254,
+            "ssim_final": 0.9339676141738892,
+            "psnr_attack": null,
+            "ssim_attack": null,
+            "ber": 0.02255555555555554
+        }
+    }
+}

@@ -470,7 +470,7 @@ def save_comparison_image(
         ),
         add_label(
             nlpe_masked_image,
-            "PS + NLPE known",
+            "PS + NLPE known pixels",
         ),
     ]
 

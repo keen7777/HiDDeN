@@ -1,0 +1,15 @@
+{
+    "data_dir": "/home/keen/HiDDeN/images",
+    "runs_root": "/home/keen/HiDDeN/runs",
+    "run_name": "3k_gaussian_blur 2026.05.26--18-42-22",
+    "mask_file": "/home/keen/HiDDeN/opt_masks_data/opt_masks_diff_150_nlpe_100_den_0.3/val_ps_nlpe_masks_density_300.npy",
+    "attack": "navier",
+    "tau": 0.25,
+    "diffusion_iterations": 150,
+    "batch_size": 1,
+    "message_seed": 42,
+    "output_root": "/home/keen/HiDDeN/optimized_mask_eval_outputs_metrics",
+    "save_images": true,
+    "save_image_limit": 10,
+    "save_mask_visuals": true
+}
