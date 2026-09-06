@@ -536,7 +536,7 @@ def main():
         write_csv_header = False
 
         with open(
-            f"evaluation_{model_name}_results.json",
+            f"validate_trained_models_result/evaluation_{model_name}_results.json",
             "w"
         ) as f:
             json.dump(

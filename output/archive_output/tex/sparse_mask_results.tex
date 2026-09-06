@@ -1,0 +1,113 @@
+
+\begin{table}[h]
+\centering
+
+\caption{Sparse mask robustness evaluation.}
+
+\label{tab:sparse_mask_results}
+
+\begin{tabular}{llrlrrrr}
+\toprule
+model & mask\_type & density & attack & PSNR & SSIM & BER & num\_images \\
+\midrule
+Frozen UNet & Optimized\_d300\_n200 & 0.300000 & navier & 30.339326 & 0.873680 & 0.272889 & 300 \\
+Baseline & Optimized\_d300\_n200 & 0.100000 & telea & 23.411635 & 0.682666 & 0.478222 & 300 \\
+Haar Wavelet & Optimized\_d150\_n100 & 0.100000 & mean & 14.284555 & 0.437911 & 0.444667 & 300 \\
+Gaussian Blur & Optimized\_d150\_n100 & 0.300000 & mean & 15.650209 & 0.478348 & 0.384667 & 300 \\
+Gaussian Blur & Optimized\_d150\_n100 & 0.100000 & mean & 14.324939 & 0.435390 & 0.461889 & 300 \\
+Haar Wavelet & Optimized\_d150\_n100 & 0.300000 & mean & 15.568465 & 0.481035 & 0.329556 & 300 \\
+Frozen UNet & Optimized\_d150\_n100 & 0.300000 & telea & 28.621088 & 0.851252 & 0.303667 & 300 \\
+Baseline & Optimized\_d300\_n200 & 0.300000 & mean & 15.627220 & 0.488531 & 0.456222 & 300 \\
+Baseline & Optimized\_d150\_n100 & 0.300000 & navier & 30.596204 & 0.879461 & 0.320444 & 300 \\
+Baseline & Optimized\_d150\_n100 & 0.300000 & mean & 15.643249 & 0.482800 & 0.460000 & 300 \\
+Baseline & Optimized\_d300\_n200 & 0.300000 & diffusion & 32.485482 & 0.916506 & 0.289778 & 300 \\
+Baseline & Optimized\_d150\_n100 & 0.100000 & diffusion & 26.800377 & 0.771776 & 0.482222 & 300 \\
+Baseline & Optimized\_d150\_n100 & 0.100000 & navier & 24.315629 & 0.688603 & 0.483444 & 300 \\
+Haar Wavelet & Optimized\_d300\_n200 & 0.300000 & mean & 15.551841 & 0.486899 & 0.328556 & 300 \\
+Gaussian Blur & Optimized\_d300\_n200 & 0.100000 & telea & 23.470405 & 0.677733 & 0.423333 & 300 \\
+Haar Wavelet & Optimized\_d300\_n200 & 0.100000 & diffusion & 26.216664 & 0.776239 & 0.382556 & 300 \\
+Gaussian Blur & Optimized\_d300\_n200 & 0.100000 & diffusion & 27.353631 & 0.779395 & 0.378333 & 300 \\
+Gaussian Blur & Optimized\_d150\_n100 & 0.300000 & navier & 30.149304 & 0.869701 & 0.185444 & 300 \\
+Baseline & Optimized\_d300\_n200 & 0.100000 & diffusion & 27.363144 & 0.781563 & 0.475778 & 300 \\
+Haar Wavelet & Optimized\_d300\_n200 & 0.300000 & diffusion & 29.444766 & 0.897299 & 0.186222 & 300 \\
+Frozen UNet & Optimized\_d300\_n200 & 0.300000 & mean & 15.636827 & 0.483584 & 0.423667 & 300 \\
+Haar Wavelet & Optimized\_d300\_n200 & 0.100000 & navier & 23.348170 & 0.668180 & 0.384556 & 300 \\
+Gaussian Blur & Optimized\_d300\_n200 & 0.100000 & mean & 14.275398 & 0.442713 & 0.458111 & 300 \\
+Frozen UNet & Optimized\_d150\_n100 & 0.300000 & mean & 15.652733 & 0.477890 & 0.425444 & 300 \\
+Frozen UNet & Optimized\_d150\_n100 & 0.100000 & mean & 14.317183 & 0.435680 & 0.483778 & 300 \\
+Gaussian Blur & Optimized\_d300\_n200 & 0.300000 & mean & 15.634049 & 0.484204 & 0.382444 & 300 \\
+Baseline & Optimized\_d150\_n100 & 0.100000 & telea & 23.373159 & 0.681554 & 0.478000 & 300 \\
+Frozen UNet & Optimized\_d150\_n100 & 0.100000 & navier & 24.290455 & 0.685621 & 0.460000 & 300 \\
+Frozen UNet & Optimized\_d150\_n100 & 0.300000 & navier & 30.328557 & 0.873398 & 0.274333 & 300 \\
+Gaussian Blur & Optimized\_d150\_n100 & 0.300000 & diffusion & 31.917561 & 0.907926 & 0.164556 & 300 \\
+Gaussian Blur & Optimized\_d150\_n100 & 0.100000 & diffusion & 26.841521 & 0.769781 & 0.388778 & 300 \\
+Baseline & Optimized\_d150\_n100 & 0.300000 & diffusion & 32.381923 & 0.914890 & 0.297333 & 300 \\
+Gaussian Blur & Optimized\_d150\_n100 & 0.100000 & navier & 24.224379 & 0.681434 & 0.407556 & 300 \\
+Frozen UNet & Optimized\_d300\_n200 & 0.300000 & telea & 28.584725 & 0.850761 & 0.304889 & 300 \\
+Gaussian Blur & Optimized\_d300\_n200 & 0.300000 & navier & 30.157700 & 0.869970 & 0.188556 & 300 \\
+Frozen UNet & Optimized\_d150\_n100 & 0.300000 & diffusion & 32.078662 & 0.909600 & 0.247111 & 300 \\
+Haar Wavelet & Optimized\_d300\_n200 & 0.100000 & telea & 22.772213 & 0.667361 & 0.396444 & 300 \\
+Gaussian Blur & Optimized\_d150\_n100 & 0.100000 & telea & 23.416989 & 0.676343 & 0.424667 & 300 \\
+Haar Wavelet & Optimized\_d150\_n100 & 0.100000 & diffusion & 25.806188 & 0.767182 & 0.386667 & 300 \\
+Gaussian Blur & Optimized\_d300\_n200 & 0.300000 & telea & 28.546803 & 0.849926 & 0.242000 & 300 \\
+Baseline & Optimized\_d150\_n100 & 0.100000 & mean & 14.299824 & 0.438164 & 0.495222 & 300 \\
+Frozen UNet & Optimized\_d300\_n200 & 0.100000 & diffusion & 27.338604 & 0.779656 & 0.443000 & 300 \\
+Frozen UNet & Optimized\_d300\_n200 & 0.100000 & mean & 14.269532 & 0.442805 & 0.481556 & 300 \\
+Gaussian Blur & Optimized\_d150\_n100 & 0.300000 & telea & 28.583932 & 0.850527 & 0.240889 & 300 \\
+Baseline & Optimized\_d300\_n200 & 0.100000 & navier & 24.457443 & 0.690990 & 0.482000 & 300 \\
+Haar Wavelet & Optimized\_d150\_n100 & 0.100000 & navier & 23.267385 & 0.665432 & 0.387000 & 300 \\
+Baseline & Optimized\_d300\_n200 & 0.100000 & mean & 14.252025 & 0.445310 & 0.497556 & 300 \\
+Frozen UNet & Optimized\_d150\_n100 & 0.100000 & diffusion & 26.792690 & 0.770081 & 0.447778 & 300 \\
+Frozen UNet & Optimized\_d300\_n200 & 0.100000 & navier & 24.441161 & 0.688688 & 0.458889 & 300 \\
+Haar Wavelet & Optimized\_d150\_n100 & 0.300000 & navier & 28.017104 & 0.851713 & 0.194556 & 300 \\
+Haar Wavelet & Optimized\_d300\_n200 & 0.300000 & telea & 27.093300 & 0.838318 & 0.216556 & 300 \\
+Haar Wavelet & Optimized\_d300\_n200 & 0.300000 & navier & 28.007036 & 0.852014 & 0.195444 & 300 \\
+Baseline & Optimized\_d150\_n100 & 0.300000 & telea & 28.656670 & 0.856450 & 0.353667 & 300 \\
+Haar Wavelet & Optimized\_d150\_n100 & 0.300000 & telea & 27.139781 & 0.838888 & 0.216889 & 300 \\
+Gaussian Blur & Optimized\_d300\_n200 & 0.300000 & diffusion & 31.992919 & 0.909478 & 0.162111 & 300 \\
+Haar Wavelet & Optimized\_d150\_n100 & 0.300000 & diffusion & 29.383411 & 0.895938 & 0.185222 & 300 \\
+Frozen UNet & Optimized\_d300\_n200 & 0.300000 & diffusion & 32.169993 & 0.911133 & 0.245778 & 300 \\
+Frozen UNet & Optimized\_d300\_n200 & 0.100000 & telea & 23.463001 & 0.680415 & 0.459222 & 300 \\
+Baseline & Optimized\_d300\_n200 & 0.300000 & navier & 30.590915 & 0.879311 & 0.312889 & 300 \\
+Haar Wavelet & Optimized\_d300\_n200 & 0.100000 & mean & 14.233768 & 0.445422 & 0.444556 & 300 \\
+Gaussian Blur & Optimized\_d300\_n200 & 0.100000 & navier & 24.375952 & 0.684387 & 0.400889 & 300 \\
+Baseline & Optimized\_d300\_n200 & 0.300000 & telea & 28.605070 & 0.855648 & 0.352556 & 300 \\
+Haar Wavelet & Optimized\_d150\_n100 & 0.100000 & telea & 22.762880 & 0.665844 & 0.396333 & 300 \\
+Frozen UNet & Optimized\_d150\_n100 & 0.100000 & telea & 23.414477 & 0.678857 & 0.457889 & 300 \\
+Frozen UNet & Random & 0.300000 & navier & 24.503442 & 0.749526 & 0.324556 & 300 \\
+Frozen UNet & Random & 0.100000 & navier & 21.532991 & 0.596541 & 0.465556 & 300 \\
+Baseline & Random & 0.300000 & navier & 24.544309 & 0.756170 & 0.363667 & 300 \\
+Gaussian Blur & Random & 0.300000 & navier & 24.398089 & 0.742701 & 0.161222 & 300 \\
+Baseline & Random & 0.100000 & navier & 21.520093 & 0.598984 & 0.486333 & 300 \\
+Frozen UNet & Random & 0.300000 & mean & 15.671768 & 0.324081 & 0.457444 & 300 \\
+Haar Wavelet & Random & 0.300000 & navier & 23.800208 & 0.734831 & 0.241111 & 300 \\
+Gaussian Blur & Random & 0.300000 & diffusion & 25.074074 & 0.762667 & 0.139556 & 300 \\
+Gaussian Blur & Random & 0.100000 & diffusion & 22.300091 & 0.617073 & 0.365333 & 300 \\
+Gaussian Blur & Random & 0.100000 & navier & 21.486402 & 0.591250 & 0.389778 & 300 \\
+Frozen UNet & Random & 0.300000 & telea & 23.910007 & 0.719309 & 0.361000 & 300 \\
+Frozen UNet & Random & 0.300000 & diffusion & 25.203400 & 0.769710 & 0.293222 & 300 \\
+Haar Wavelet & Random & 0.300000 & diffusion & 24.482131 & 0.757824 & 0.237556 & 300 \\
+Haar Wavelet & Random & 0.100000 & navier & 21.111182 & 0.583258 & 0.422444 & 300 \\
+Baseline & Random & 0.300000 & mean & 15.682996 & 0.328057 & 0.481667 & 300 \\
+Gaussian Blur & Random & 0.300000 & mean & 15.670043 & 0.323698 & 0.426667 & 300 \\
+Gaussian Blur & Random & 0.100000 & mean & 14.603222 & 0.277138 & 0.476000 & 300 \\
+Frozen UNet & Random & 0.100000 & mean & 14.603755 & 0.277338 & 0.488000 & 300 \\
+Baseline & Random & 0.100000 & telea & 21.631852 & 0.596322 & 0.484889 & 300 \\
+Haar Wavelet & Random & 0.100000 & telea & 21.362344 & 0.589086 & 0.428444 & 300 \\
+Gaussian Blur & Random & 0.300000 & telea & 23.860176 & 0.715761 & 0.245444 & 300 \\
+Baseline & Random & 0.300000 & telea & 23.915055 & 0.724776 & 0.400222 & 300 \\
+Haar Wavelet & Random & 0.300000 & mean & 15.625080 & 0.327017 & 0.372889 & 300 \\
+Gaussian Blur & Random & 0.100000 & telea & 21.652539 & 0.591728 & 0.426333 & 300 \\
+Frozen UNet & Random & 0.100000 & diffusion & 22.357640 & 0.621242 & 0.465111 & 300 \\
+Baseline & Random & 0.100000 & diffusion & 22.352642 & 0.623469 & 0.473111 & 300 \\
+Haar Wavelet & Random & 0.100000 & mean & 14.585330 & 0.279496 & 0.449889 & 300 \\
+Haar Wavelet & Random & 0.100000 & diffusion & 22.038891 & 0.617041 & 0.428667 & 300 \\
+Frozen UNet & Random & 0.100000 & telea & 21.667569 & 0.594766 & 0.471889 & 300 \\
+Baseline & Random & 0.300000 & diffusion & 25.256151 & 0.776647 & 0.322556 & 300 \\
+Haar Wavelet & Random & 0.300000 & telea & 23.440858 & 0.712151 & 0.278778 & 300 \\
+Baseline & Random & 0.100000 & mean & 14.608898 & 0.279005 & 0.500111 & 300 \\
+\bottomrule
+\end{tabular}
+
+
+\end{table}
